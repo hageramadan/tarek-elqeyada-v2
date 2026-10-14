@@ -29,10 +29,7 @@ import { CarService } from "@/src/services/carService";
 import { AvailableDate, AvailableHour } from "@/src/types/api";
 import { useAuth } from "@/src/context/AuthContext";
 
-import {
-  AvailableMonth,
-  AvailablePeriod,
-} from "@/src/utils/bookingUtils";
+import { AvailableMonth, AvailablePeriod } from "@/src/utils/bookingUtils";
 
 // استيراد Hook Firebase
 import { usePhoneAuth } from "@/src/hooks/usePhoneAuth";
@@ -281,7 +278,44 @@ export default function BookingForm({
     const hour12 = hours % 12 || 12;
     return `${hour12}:${String(minutes).padStart(2, "0")} ${period}`;
   };
+  // ✅ دالة فلترة الأوقات: تستبعد الأوقات السابقة لو التاريخ المختار هو النهاردة
+ const filterAvailableTimes = useCallback(
+  (times: string[], dateStr: string): string[] => {
+    if (!dateStr || times.length === 0) return times;
 
+    const today = new Date();
+    const todayStr = format(today, "yyyy-MM-dd");
+
+    if (dateStr !== todayStr) return times;
+
+    const now = new Date();
+    // ✅ بداية الساعة الجاية (لو 10:14 → 11:00)
+    const nextHourStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      now.getHours() + 1,
+      0,
+      0,
+      0,
+    );
+
+    return times.filter((time) => {
+      const [hours, minutes] = time.split(":").map(Number);
+      const timeDate = new Date(
+        now.getFullYear(),
+        now.getMonth(),
+        now.getDate(),
+        hours,
+        minutes,
+        0,
+        0,
+      );
+      return timeDate >= nextHourStart;
+    });
+  },
+  [],
+);
   // ========== جلب فترات الحجز (اليومي والشهري معاً) ==========
   useEffect(() => {
     const fetchAllPeriods = async () => {
@@ -313,8 +347,18 @@ export default function BookingForm({
         setAvailableDates(dailyData.available_dates || []);
 
         const dailyDates = (dailyData.available_dates || [])
-          .filter((d) => d.is_available)
-          .map((d) => new Date(d.date));
+  .filter((d) => {
+    if (!d.is_available) return false;
+    // لازم يكون فيه وقت واحد على الأقل لسه متاح
+    const validTimes = filterAvailableTimes(
+      d.available_hours
+        .filter((h: any) => h.is_available)
+        .map((h: any) => h.time),
+      d.date,
+    );
+    return validTimes.length > 0;
+  })
+  .map((d) => new Date(d.date));
 
         console.log("📅 dailyDates count (after filter):", dailyDates.length);
 
@@ -377,9 +421,12 @@ export default function BookingForm({
             );
 
             if (dailyDate) {
-              const times = dailyDate.available_hours
-                .filter((hour) => hour.is_available)
-                .map((hour) => hour.time);
+              const times = filterAvailableTimes(
+                dailyDate.available_hours
+                  .filter((hour) => hour.is_available)
+                  .map((hour) => hour.time),
+                firstDateStr,
+              );
 
               setMonthlyTimeList(times);
 
@@ -402,15 +449,18 @@ export default function BookingForm({
             (d) => d.date === dateStr,
           );
           if (selectedDate) {
-            const times = selectedDate.available_hours
-              .filter((h) => h.is_available)
-              .map((h) => h.time);
-            setAvailableTimeList(times);
-            if (times.length > 0) {
-              updateField("rentalTime", times[0]);
-              setSelectedTimeIndex(0);
-            }
-          }
+  const times = filterAvailableTimes(
+    selectedDate.available_hours
+      .filter((h) => h.is_available)
+      .map((h) => h.time),
+    dateStr,
+  );
+  setAvailableTimeList(times);
+  if (times.length > 0) {
+    updateField("rentalTime", times[0]);
+    setSelectedTimeIndex(0);
+  }
+}
         }
       } catch (error) {
         console.error("Error fetching periods:", error);
@@ -429,9 +479,12 @@ export default function BookingForm({
         (d) => d.date === bookingData.rentalDate,
       );
       if (selectedDate) {
-        const times = selectedDate.available_hours
+         const times = filterAvailableTimes(
+        selectedDate.available_hours
           .filter((h) => h.is_available)
-          .map((h) => h.time);
+          .map((h) => h.time),
+        bookingData.rentalDate,
+      );
 
         setAvailableTimeList(times);
         setSelectedTimeIndex(0);
@@ -442,7 +495,7 @@ export default function BookingForm({
         }
       }
     }
-  }, [bookingData.rentalDate, availableDates]);
+  }, [bookingData.rentalDate, availableDates , filterAvailableTimes]);
 
   useEffect(() => {
     if (bookingData.rentalDays < minimumDays) {
@@ -687,9 +740,12 @@ export default function BookingForm({
 
     const selectedDate = availableDates.find((d) => d.date === dateStr);
     if (selectedDate) {
-      const times = selectedDate.available_hours
+     const times = filterAvailableTimes(
+      selectedDate.available_hours
         .filter((h) => h.is_available)
-        .map((h) => h.time);
+        .map((h) => h.time),
+      dateStr,
+    );
       setAvailableTimeList(times);
       if (times.length > 0) {
         updateField("rentalTime", times[0]);
@@ -727,9 +783,13 @@ export default function BookingForm({
     const selectedDate = availableDates.find((d) => d.date === dateStr);
 
     if (selectedDate) {
-      const times = selectedDate.available_hours
-        .filter((h) => h.is_available)
-        .map((h) => h.time);
+      const times = filterAvailableTimes(
+    selectedDate.available_hours
+      .filter((h) => h.is_available)
+      .map((h) => h.time),
+    dateStr,
+  );
+
 
       setMonthlyTimeList(times);
 
@@ -831,9 +891,7 @@ export default function BookingForm({
       });
 
       if (validation.periodId) {
-        const period = monthlyPeriods.find(
-          (p) => p.id === validation.periodId,
-        );
+        const period = monthlyPeriods.find((p) => p.id === validation.periodId);
         if (period) {
           const fallbackMonths = Math.max(
             1,
