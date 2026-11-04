@@ -7,6 +7,7 @@ import { CarService } from '@/src/services/carService';
 import BookingForm from '@/src/components/booking/BookingForm';
 import Link from 'next/link';
 import { RiArrowRightSLine } from "react-icons/ri";
+import { getCarDetailPrice, getCarDetailOriginalPrice } from '@/src/utils/carDetailsPrices';
 
 export default function CarBookingPage() {
   const params = useParams();
@@ -15,7 +16,10 @@ export default function CarBookingPage() {
   const id = params.id as string;
   const carId = parseInt(id);
   const officeId = searchParams.get('officeId') ? parseInt(searchParams.get('officeId')!) : null;
-  const type = searchParams.get('type') as 'daily' | 'monthly' || 'daily';
+  const requestedType = searchParams.get('type');
+  const type = requestedType === 'monthly' ? 'monthly'
+    : requestedType === 'weekly' || (requestedType === 'daily' && searchParams.get('days') === '7')
+      ? 'weekly' : 'daily';
 
   const [carData, setCarData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,10 +35,16 @@ export default function CarBookingPage() {
 
       try {
         setLoading(true);
+        setError(null);
         let data;
-        if (type === 'daily') {
+        if (type !== 'monthly') {
           
           data = await CarService.getDailyCarDetails(officeId, carId);
+          if (type === 'weekly') {
+            if (getCarDetailPrice(data, 'weekly') == null) {
+              throw new Error('لا توجد فترة أسبوعية متاحة لهذه السيارة');
+            }
+          }
         } else {
         
           data = await CarService.getMonthlyCarDetails(officeId, carId);
@@ -77,15 +87,20 @@ export default function CarBookingPage() {
   }
 
   // تحويل البيانات
+  const dailyPrice = getCarDetailPrice(carData, 'daily') ?? 0;
+  const weeklyPrice = getCarDetailPrice(carData, 'weekly');
+  const monthlyPrice = getCarDetailPrice(carData, 'monthly') ?? 0;
   const car = {
     id: carData.id,
     name: carData.name,
     brand: carData.brand?.name || '',
     brandLogo: carData.brand?.image_url || '',
     year: carData.model_year,
-    pricePerDay: carData.price_per_day || carData.price_per_month || 0,
-    pricePerMonth: carData.price_per_month || 0,
-    pricePerDayAfterDiscount: carData.price_per_day_after_discount || carData.price_per_month_after_discount || 0,
+    pricePerDay: type === 'weekly' ? weeklyPrice! / 7 : dailyPrice,
+    pricePerWeek: weeklyPrice,
+    pricePerMonth: monthlyPrice,
+    originalRentalPrice: getCarDetailOriginalPrice(carData, type),
+    pricePerDayAfterDiscount: type === 'weekly' ? weeklyPrice! / 7 : dailyPrice,
     discount: carData.discount || 0,
     image: carData.image_url || '',
     image_url: carData.image_url || '',
@@ -138,7 +153,7 @@ export default function CarBookingPage() {
     discount: period.discount || 0,
   })) || [];
 
-  const rentalType = type === 'daily' ? 'يومي' : 'شهري';
+  const rentalType = type === 'weekly' ? 'أسبوعي' : type === 'monthly' ? 'شهري' : 'يومي';
 
   return (
     <div className="min-h-screen bg-white py-8 px-4 mt-12 lg:mt-16">
@@ -156,6 +171,7 @@ export default function CarBookingPage() {
           services={services}
           periods={bookingPeriods}
           rentalType={rentalType}
+          initialRentalDays={type === 'weekly' ? Math.max(7, Math.ceil(car.minimumDays / 7) * 7) : undefined}
         />
       </div>
     </div>

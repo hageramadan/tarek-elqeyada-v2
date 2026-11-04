@@ -1,6 +1,6 @@
 import type { Brand, CarCategory, Office } from "./api";
 
-export type RentalPeriodType = "daily" | "monthly";
+export type RentalPeriodType = "daily" | "weekly" | "monthly";
 
 export interface CatalogPeriod {
   id: number;

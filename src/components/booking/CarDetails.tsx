@@ -15,6 +15,8 @@ interface CarDetailsProps {
     year: string;
     pricePerDay: number;
     pricePerMonth?: number;
+    pricePerWeek?: number;
+    originalRentalPrice?: number;
     image: string;
     image_url?: string;
     guarantees?: { title: string }[];
@@ -24,7 +26,7 @@ interface CarDetailsProps {
     transmission?: string;
     fuelType?: string;
   };
-  rentalType?: "يومي" | "شهري";
+  rentalType?: "يومي" | "أسبوعي" | "شهري";
 }
 
 export default function CarDetails({
@@ -35,9 +37,10 @@ export default function CarDetails({
 
   const isMonthly = rentalType === "شهري";
   const price = isMonthly
-    ? car.pricePerMonth || car.pricePerDay
-    : car.pricePerDay;
-  const period = isMonthly ? "الشهر" : "اليوم";
+    ? car.pricePerMonth ?? car.pricePerDay
+    : rentalType === "أسبوعي" ? car.pricePerWeek ?? car.pricePerDay * 7 : car.pricePerDay;
+  const period = isMonthly ? "الشهر" : rentalType === "أسبوعي" ? "الأسبوع" : "اليوم";
+  const hasDiscount = car.originalRentalPrice != null && car.originalRentalPrice > price;
 
   return (
     <div className="bg-white rounded-2xl border overflow-hidden">
@@ -78,6 +81,11 @@ export default function CarDetails({
             </div>
             <div className="col-span-1 md:hidden">
               <div className="flex items-center gap-1 lg:gap-2 justify-end">
+                {hasDiscount && (
+                  <del className="text-sm text-gray-500" aria-label="السعر قبل الخصم">
+                    {car.originalRentalPrice}
+                  </del>
+                )}
                 <p className="text-xl md:text-2xl font-bold text-primary">
                   {price}
                 </p>
@@ -94,6 +102,11 @@ export default function CarDetails({
         {/* عمود السعر - في النص */}
         <div className="hidden md:flex md:col-span-1 items-center justify-end">
           <div className="flex items-center gap-1 lg:gap-2">
+            {hasDiscount && (
+              <del className="text-base lg:text-lg text-gray-500" aria-label="السعر قبل الخصم">
+                {car.originalRentalPrice}
+              </del>
+            )}
             <p className="text-2xl md:text-3xl font-bold text-primary">
               {price}
             </p>

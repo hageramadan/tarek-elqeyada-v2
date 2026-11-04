@@ -13,12 +13,16 @@ export function filterCarCatalog(
 
       // Some daily periods span a week; use the shortest matching rental period.
       const period = detail.periods
-        .filter((period) => period.type === type && period.days > 0)
+        .filter((period) => period.days > 0 && (
+          period.type === type || (
+            type === "weekly" && period.type === "daily" && period.days === 7
+          )
+        ))
         .sort((a, b) => a.days - b.days || a.price - b.price)[0];
       if (!period) return [];
 
       const office = detail.office;
-      const discount = period.discount ?? 0;
+      const discountAmount = Math.max(0, period.discount ?? 0);
       return [{
         id: car.id,
         name: car.name,
@@ -27,8 +31,8 @@ export function filterCarCatalog(
         model: car.brand?.name || "",
         year: car.model_year,
         pricePerDay: period.price,
-        pricePerDayAfterDiscount: period.price * (1 - discount / 100),
-        discount,
+        pricePerDayAfterDiscount: Math.max(0, period.price - discountAmount),
+        discount: discountAmount,
         image: car.image_url,
         category: category.name,
         categoryId: category.id,

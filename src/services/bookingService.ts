@@ -25,7 +25,7 @@ export class BookingService {
   static async submitBooking(
     data: BookingData,
     carData: any,
-    rentalType: 'daily' | 'monthly',
+    rentalType: 'daily' | 'weekly' | 'monthly',
     token: string
   ): Promise<{ 
     success: boolean; 
@@ -66,7 +66,7 @@ export class BookingService {
         additional_services: data.selectedServices?.map(id => parseInt(id)) || [],
         uuid: data.uuid || crypto.randomUUID(),
         delivery_type: 'to_location',
-        total_days: data.rentalDays || 1,
+        count: (data.rentalDays || 1) / (rentalType === 'weekly' ? 7 : rentalType === 'monthly' ? 30 : 1),
         car_id: parseInt(data.carId || '0'),
         payment_method_id: paymentMethodId,
         index: finalIndex,

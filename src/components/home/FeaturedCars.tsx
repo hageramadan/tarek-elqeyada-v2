@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { Card, CardContent } from "@/src/ui/card";
 import { Button } from "@/src/ui/button";
-import { FaCalendarDay, FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarDay, FaCalendarWeek, FaCalendarAlt } from "react-icons/fa";
 import "swiper/css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -28,7 +28,7 @@ function CarCard({
   const image = car.image;
   const name = car.name;
   const year = car.year;
-  const discount = car.discount;
+  const discount = Math.max(0, car.pricePerDay - price);
 
   return (
     <Card
@@ -47,7 +47,7 @@ function CarCard({
           />
           {discount > 0 && (
             <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-              خصم {discount}%
+              خصم {discount} ريال
             </span>
           )}
         </div>
@@ -65,6 +65,11 @@ function CarCard({
           </div>
 
           <div className="flex items-center justify-center gap-2">
+            {car.pricePerDay > price && (
+              <del className="text-xs lg:text-base text-gray-500" aria-label="السعر قبل الخصم">
+                {car.pricePerDay}
+              </del>
+            )}
             <span className="text-sm lg:text-2xl font-bold text-[#4b398e]">
               {price}
             </span>
@@ -167,7 +172,7 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
                 <SwiperSlide key={`${car.providerId}-${car.id}`} className="mb-5 lg:mb-12">
                   <CarCard
                     car={car}
-                    period={activeTab === "daily" ? "يومياً" : "شهرياً"}
+                    period={{ daily: "يومياً", weekly: "أسبوعياً", monthly: "شهرياً" }[activeTab]}
                     onClick={() => handleCarClick(car.id, car.providerId)}
                   />
                 </SwiperSlide>
@@ -206,7 +211,7 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
   return (
     <section className="py-2 pt-4 lg:pt-8" data-featured-cars-loaded>
       <div className="container mx-auto px-2">
-        <div className="flex justify-center gap-4 mb-10">
+        <div className="flex flex-wrap justify-center gap-3 lg:gap-4 mb-10">
           <Button
             onClick={() => setActiveTab("daily")}
             aria-pressed={activeTab === "daily"}
@@ -218,6 +223,19 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
           >
             <FaCalendarDay className="ml-2" />
             تأجير يومي
+          </Button>
+
+          <Button
+            onClick={() => setActiveTab("weekly")}
+            aria-pressed={activeTab === "weekly"}
+            className={`px-6 py-5 text-base lg:px-8 lg:py-6 lg:text-lg rounded-full transition-all duration-300 ${
+              activeTab === "weekly"
+                ? "bg-primary text-white shadow-lg shadow-primary/30"
+                : "bg-white text-gray-600 border-2 border-gray-200 hover:border-primary hover:text-primary"
+            }`}
+          >
+            <FaCalendarWeek className="ml-2" />
+            تأجير أسبوعي
           </Button>
 
           <Button
@@ -241,7 +259,9 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
             <p className="text-gray-500 text-lg">
               {activeTab === "daily"
                 ? "لا توجد سيارات يومية متاحة حالياً"
-                : "لا توجد سيارات شهرية متاحة حالياً"}
+                : activeTab === "weekly"
+                  ? "لا توجد سيارات أسبوعية متاحة حالياً"
+                  : "لا توجد سيارات شهرية متاحة حالياً"}
             </p>
           </div>
         )}

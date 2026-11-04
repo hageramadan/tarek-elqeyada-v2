@@ -38,8 +38,8 @@ export const PaymentMethodNames: Record<PaymentMethodType, string> = {
 
 // المفاتيح العامة لـ Paymob
 const PAYMOB_PUBLIC_KEYS = {
-  SAU_LIVE: "sau_pk_live_uIsTYNAhY7ONDAtd6eYycGxZHCIe58mH",
-  SAU_TEST: "sau_pk_live_uIsTYNAhY7ONDAtd6eYycGxZHCIe58mH",
+  SAU_LIVE: "sau_pk_live_8Dza5gChMSVJbnsKtWKJOTs8jlQz6ZEW",
+  SAU_TEST: "sau_pk_live_8Dza5gChMSVJbnsKtWKJOTs8jlQz6ZEW",
   EGY_LIVE: 'egy_pk_live_cZxW9YgHkLmNpQrStUvWxYz1234567890',
   EGY_TEST: 'egy_pk_test_wooiLbVXlhiRY1W6vj7iPI7RZaHSDwbA',
 };

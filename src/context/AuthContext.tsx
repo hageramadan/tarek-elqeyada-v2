@@ -185,7 +185,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // التسجيل
   const register = async (userData: any) => {
     try {
-      const response = await fetch('https://admin.tareqalqeyada.sa/api/user/register', {
+      const response = await fetch('https://admin.tareqalqeyada.sa/api/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

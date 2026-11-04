@@ -193,6 +193,8 @@ export const useBookingForm = (
   bookingType: "daily" | "monthly" = "daily",
   carName?: string,
   periods: any[] = [],
+  initialRentalDays: number = 1,
+  priceBookingType: "daily" | "weekly" | "monthly" = bookingType,
 ) => {
   const { token, isAuthenticated } = useAuth();
   const router = useRouter();
@@ -201,6 +203,7 @@ export const useBookingForm = (
     () =>
       ({
         ...getInitialBookingData(carId),
+        rentalDays: initialRentalDays,
         customerName: "",
         customerPhone: "",
         selectedServices: [],
@@ -340,10 +343,12 @@ export const useBookingForm = (
         .filter((id) => !isNaN(id));
 
       const params: any = {
-        booking_type: bookingType,
+        booking_type: priceBookingType,
         rental_company_id: rentalCompanyId,
         start_date: bookingData.rentalDate,
-        total_days: bookingData.rentalDays,
+        count: bookingData.rentalDays / (
+          priceBookingType === "weekly" ? 7 : priceBookingType === "monthly" ? 30 : 1
+        ),
         car_id: parseInt(carId),
         start_time: time,
         additional_services:
@@ -373,6 +378,7 @@ export const useBookingForm = (
     rentalCompanyId,
     carId,
     bookingType,
+    priceBookingType,
     bookingData.selectedServices,
     selectedPeriodId,
   ]);
@@ -595,7 +601,7 @@ export const useBookingForm = (
           },
           insuranceTypeId: insuranceTypeId,
         },
-        bookingType,
+        priceBookingType,
         token,
       );
 
@@ -724,6 +730,7 @@ export const useBookingForm = (
     carId,
     rentalCompanyId,
     bookingType,
+    priceBookingType,
     carName,
     router,
     resetForm,

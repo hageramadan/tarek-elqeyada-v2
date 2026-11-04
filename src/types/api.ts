@@ -604,6 +604,8 @@ export interface CarDetailsResponse {
   price_per_day?: number;
   discount?: number;
   price_per_day_after_discount?: number;
+  price_per_week?: number;
+  price_per_week_after_discount?: number;
   price_per_month?: number;
   price_per_month_after_discount?: number;
   office: Office;
@@ -680,15 +682,15 @@ export interface PaymentMethodsResponse {
   services: PaymentMethod[];
 }
 
-export interface CalculatePriceRequest {
-  booking_type: 'daily' | 'monthly';
+export type CalculatePriceRequest = {
+  booking_type: 'daily' | 'weekly' | 'monthly';
+  count: number;
   rental_company_id: number;
   start_date: string;
-  total_days: number;
   car_id: number;
   start_time: string;
   additional_services?: number[];
-}
+};
 
 export interface PriceBreakdown {
   base_price: number;

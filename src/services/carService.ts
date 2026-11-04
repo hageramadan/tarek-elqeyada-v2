@@ -59,8 +59,10 @@ export class CarService extends ApiService {
   // 🔑 Public Keys - Production & Test
   // ============================================
   private static readonly PUBLIC_KEY_TEST = "sau_pk_test_SCltAxh7OTxzJ5ydtfIhJstUARoCOekt";
-  private static readonly PUBLIC_KEY_LIVE = "sau_pk_live_uIsTYNAhY7ONDAtd6eYycGxZHCIe58mH"; // استبدليها بالمفتاح الصحيح
-
+  // sau_pk_live_8Dza5gChMSVJbnsKtWKJOTs8jlQz6ZEW
+  // "sau_pk_live_8Dza5gChMSVJbnsKtWKJOTs8jlQz6ZEW"
+  private static readonly PUBLIC_KEY_LIVE = "sau_pk_live_8Dza5gChMSVJbnsKtWKJOTs8jlQz6ZEW"; // استبدليها بالمفتاح الصحيح
+  // 
   // ============================================
   // 📦 Base URLs - Production & Test
   // ============================================
@@ -377,7 +379,7 @@ export class CarService extends ApiService {
         booking_type: params.booking_type,
         rental_company_id: params.rental_company_id,
         start_date: params.start_date,
-        total_days: params.total_days,
+        count: params.count,
         car_id: params.car_id,
         start_time: params.start_time,
       };
@@ -435,7 +437,7 @@ export class CarService extends ApiService {
         additional_services: params.additional_services || [],
         uuid: params.uuid || crypto.randomUUID(),
         delivery_type: params.delivery_type || "to_location",
-        total_days: params.total_days || 1,
+        count: params.count ?? 1,
         car_id: params.car_id,
         payment_method_id: params.payment_method_id,
         index: params.index || 1,

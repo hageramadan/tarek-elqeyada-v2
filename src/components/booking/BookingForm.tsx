@@ -46,7 +46,8 @@ interface BookingFormProps {
   car: any;
   services: any[];
   periods?: any[];
-  rentalType?: "يومي" | "شهري";
+  rentalType?: "يومي" | "أسبوعي" | "شهري";
+  initialRentalDays?: number;
 }
 
 export default function BookingForm({
@@ -55,9 +56,11 @@ export default function BookingForm({
   services,
   periods = [],
   rentalType = "يومي",
+  initialRentalDays = 1,
 }: BookingFormProps) {
   const rentalCompanyId = car?.providerId || car?.office?.id;
-  const bookingType = rentalType === "يومي" ? "daily" : "monthly";
+  const isWeekly = rentalType === "أسبوعي";
+  const bookingType = rentalType === "شهري" ? "monthly" : "daily";
 
   const { user, isAuthenticated, register } = useAuth();
 
@@ -104,6 +107,8 @@ export default function BookingForm({
     bookingType,
     car?.name || "سياره",
     monthlyPeriodsFromProps,
+    initialRentalDays,
+    isWeekly ? "weekly" : bookingType,
   );
 
   // Firebase Phone Auth
@@ -159,7 +164,9 @@ export default function BookingForm({
   const [availableTimeList, setAvailableTimeList] = useState<string[]>([]);
   const [selectedTimeIndex, setSelectedTimeIndex] = useState<number>(0);
 
-  const minimumDays = car?.minimumDays || car?.minimum_days || 1;
+  const baseMinimumDays = car?.minimumDays || car?.minimum_days || 1;
+  const minimumDays = isWeekly ? Math.max(7, Math.ceil(baseMinimumDays / 7) * 7) : baseMinimumDays;
+  const rentalDayStep = isWeekly ? 7 : 1;
 
   // ========== الحجز الشهري ==========
   const [monthlyDateList, setMonthlyDateList] = useState<Date[]>([]);
@@ -808,20 +815,20 @@ export default function BookingForm({
   // دوال التحكم في عدد الأيام (للحجز اليومي)
   const incrementDays = () => {
     const currentDays = bookingData.rentalDays || minimumDays;
-    updateField("rentalDays", currentDays + 1);
+    updateField("rentalDays", currentDays + rentalDayStep);
   };
 
   const decrementDays = () => {
     const currentDays = bookingData.rentalDays || minimumDays;
     if (currentDays > minimumDays) {
-      updateField("rentalDays", currentDays - 1);
+      updateField("rentalDays", currentDays - rentalDayStep);
     } else {
       toast.error(`الحد الأدنى للحجز هو ${minimumDays} أيام`);
     }
   };
 
   const handleDaysChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value);
+    const value = parseInt(e.target.value) * rentalDayStep;
     if (!isNaN(value)) {
       if (value >= minimumDays) {
         updateField("rentalDays", value);
@@ -1087,7 +1094,7 @@ export default function BookingForm({
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <label className="block text-sm font-bold text-[#1F2937] mb-2">
-                      عدد أيام الحجز *
+                      {isWeekly ? "عدد أسابيع الحجز *" : "عدد أيام الحجز *"}
                     </label>
                     <p className="text-gray-500 text-sm">
                       {bookingData.rentalDays || minimumDays} أيام
@@ -1105,8 +1112,9 @@ export default function BookingForm({
 
                       <input
                         type="number"
-                        min={minimumDays}
-                        value={bookingData.rentalDays || minimumDays}
+                        min={minimumDays / rentalDayStep}
+                        step={1}
+                        value={(bookingData.rentalDays || minimumDays) / rentalDayStep}
                         onChange={handleDaysChange}
                         onBlur={() => {
                           if (
@@ -1264,7 +1272,7 @@ export default function BookingForm({
             selectedMethod={bookingData.selectedPaymentMethod}
             onSelect={(id) => updateField("selectedPaymentMethod", id)}
             error={errors.selectedPaymentMethod}
-            rentalType={rentalType}
+            rentalType={rentalType === "أسبوعي" ? "يومي" : rentalType}
           />
 
           <div
