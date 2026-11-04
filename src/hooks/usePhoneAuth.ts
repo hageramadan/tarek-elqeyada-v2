@@ -1,5 +1,5 @@
 // src/hooks/usePhoneAuth.ts
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   signInWithPhoneNumber,
   RecaptchaVerifier,
@@ -22,6 +22,7 @@ export const usePhoneAuth = () => {
     useState<ConfirmationResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isOTPSent, setIsOTPSent] = useState(false);
+  const sendingOTP = useRef(false);
 
   const setupRecaptcha = () => {
   if (typeof window === 'undefined') return null;
@@ -99,11 +100,15 @@ export const usePhoneAuth = () => {
 const sendOTP = async (
   phone: string,
 ): Promise<{ success: boolean; errorCode?: string }> => {
+  if (sendingOTP.current) {
+    return { success: false, errorCode: "request-in-progress" };
+  }
   if (!phone) {
     toast.error("يرجى إدخال رقم الجوال");
     return { success: false, errorCode: "empty-phone" };
   }
 
+  sendingOTP.current = true;
   setIsLoading(true);
   try {
     const verifier = setupRecaptcha();
@@ -126,18 +131,18 @@ const sendOTP = async (
     if (error.code === "auth/invalid-phone-number") {
       toast.error("رقم الجوال غير صحيح");
     } else if (error.code === "auth/too-many-requests") {
-      toast.error("طلبات كثيرة، حاول لاحقاً");
+      toast.error("تم إيقاف إرسال الأكواد مؤقتًا بسبب كثرة المحاولات. حاول لاحقًا.", { id: "otp-send-error" });
     } else if (error.code === "auth/invalid-app-credential") {
       toast.error("❌ خطأ في المصادقة. تأكد من API Key");
     } else if (errorCode.includes("-39") || errorCode.includes("captcha")) {
-      // ⚠️ خطأ reCAPTCHA - منعرضش رسالة
-      console.warn("⚠️ reCAPTCHA error detected:", errorCode);
+      toast.error("تعذر إكمال التحقق الأمني. حاول مرة أخرى لاحقًا.");
     } else {
       toast.error(error.message || "فشل إرسال رمز التحقق");
     }
 
     return { success: false, errorCode };
   } finally {
+    sendingOTP.current = false;
     setIsLoading(false);
   }
 };

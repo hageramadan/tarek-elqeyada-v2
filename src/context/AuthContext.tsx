@@ -4,6 +4,7 @@
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from 'react-hot-toast';
+import { authenticatePhoneAccount } from '@/src/services/phoneAccountService';
 
 interface AuthContextType {
   user: any | null;
@@ -182,42 +183,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // التسجيل
+  // دخول الحساب الموجود أو إنشاء حساب للرقم الجديد دون إظهار الخطأ الوسيط.
   const register = async (userData: any) => {
+    const data = await authenticatePhoneAccount(userData);
+    login(data.data.user, data.data.user.token);
     try {
-      const response = await fetch('https://admin.tareqalqeyada.sa/api/user/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          country_code: userData.country_code || '+966',
-          phone: userData.phone,
-          name: userData.name,
-        }),
-      });
-
-      const data = await response.json();
-      
-      if (data.result) {
-        const token = data.data?.user?.token;
-        const userDataResponse = data.data?.user || userData;
-        
-        if (token) {
-          login(userDataResponse, token);
-          // جلب البيانات الكاملة للمستخدم
-          await getUserProfile();
-        } else {
-          throw new Error('لم يتم استلام التوكن');
-        }
-        return data;
-      } else {
-        throw new Error(data.message || 'فشل التسجيل');
-      }
+      await getUserProfile();
     } catch (error) {
-      console.error('Registration error:', error);
-      throw error;
+      console.error('Profile refresh after sign-in failed:', error);
     }
+    return data;
   };
 
   return (

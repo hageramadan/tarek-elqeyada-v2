@@ -642,7 +642,7 @@ export default function BookingForm({
 
     const formattedPhone = formatPhoneNumber(phone, countryCode);
     const sent = await sendOTP(formattedPhone);
-    if (sent) {
+    if (sent.success) {
       toast.success("📱 تم إعادة إرسال رمز التحقق");
     }
   };
@@ -673,28 +673,19 @@ export default function BookingForm({
         const result = await handleSendOTP();
 
         if (!result.success) {
-          const isCaptchaError =
-            result.errorCode?.includes("-39") ||
-            result.errorCode?.includes("captcha") ||
-            result.errorCode?.includes("invalid-app-credential");
-
-          if (isCaptchaError) {
-            console.warn("⚠️ Captcha error - falling back to register only");
-
+          if (result.errorCode === "auth/too-many-requests") {
+            toast.dismiss("otp-send-error");
             const registered = await handleRegisterUser();
-
             if (registered) {
-              setIsIdentityVerified(true);
-              setIsVerifying(false);
-              toast.success("✓ تم تسجيل حسابك بنجاح");
+              setIsPhoneVerified(false);
+              setIsIdentityVerified(false);
+              setShowOTPInput(false);
+              setIsOTPPopupOpen(false);
+              toast.success("تم تسجيل الحساب بدون تأكيد رقم الجوال");
             } else {
-              toast.error("فشل تسجيل الحساب. حاول مرة أخرى.");
-              setIsVerifying(false);
+              toast.error("تعذر تسجيل الحساب. حاول لاحقًا.");
             }
-            return;
           }
-
-          toast.error("فشل إرسال رمز التحقق");
           setIsVerifying(false);
           return;
         }
