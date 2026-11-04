@@ -21,7 +21,7 @@ export default function Footer() {
     const fetchSettings = async () => {
       try {
         const response = await fetch(
-          `https://dev.tareqalqeyada.sa/api/settings`,
+          `https://admin.tareqalqeyada.sa/api/settings`,
           {
             method: "GET",
             headers: {

@@ -6,7 +6,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'dev.tareqalqeyada.sa',
+        hostname: 'admin.tareqalqeyada.sa',
         port: '',
         pathname: '/**',
       },

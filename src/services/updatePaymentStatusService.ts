@@ -16,7 +16,7 @@ interface UpdatePaymentStatusResponse {
 }
 
 export class UpdatePaymentStatusService {
-  private static baseURL: string = 'https://dev.tareqalqeyada.sa/api';
+  private static baseURL: string = 'https://admin.tareqalqeyada.sa/api';
 
   static async updatePaymentStatus(
     params: UpdatePaymentStatusParams,

@@ -4,13 +4,13 @@ import { getAuth } from 'firebase/auth';
 
 // Config بتاعك
 const firebaseConfig = {
-  apiKey: "AIzaSyBVuyHmcAtndLiaQIG9JALuEiD4WfUnrYM",
-  authDomain: "masheha-fcf45.firebaseapp.com",
-  projectId: "masheha-fcf45",
-  storageBucket: "masheha-fcf45.firebasestorage.app",
-  messagingSenderId: "27400816012",
-  appId: "1:27400816012:web:924bca5274b5deb22602a9",
-  measurementId: "G-21RCM3CNRR"
+  apiKey: "AIzaSyDCB3S8v8w_yAP3bbKHn9B1fJOFYcoJLFQ",
+  authDomain: "tariqalqeyada.firebaseapp.com",
+  projectId: "tariqalqeyada",
+  storageBucket: "tariqalqeyada.firebasestorage.app",
+  messagingSenderId: "928553256087",
+  appId: "1:928553256087:web:a045aed807a8e46bff15d2",
+  measurementId: "G-ZQR3REP4KX"
 };
 
 // منع إعادة تهيئة Firebase في الـ Server Side (مهم لـ Next.js)

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-const BASE_URL = "https://dev.tareqalqeyada.sa/api";
+const BASE_URL = "https://admin.tareqalqeyada.sa/api";
 
 export class ApiService {
   protected static async request<T>(

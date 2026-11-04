@@ -32,7 +32,7 @@ export default function IconsFeatures() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch("https://dev.tareqalqeyada.sa/api/icons", {
+        const response = await fetch("https://admin.tareqalqeyada.sa/api/icons", {
           headers: {
             "accept-language": "ar",
           },
