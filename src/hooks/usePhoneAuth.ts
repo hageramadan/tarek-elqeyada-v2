@@ -132,6 +132,8 @@ const sendOTP = async (
       toast.error("رقم الجوال غير صحيح");
     } else if (error.code === "auth/too-many-requests") {
       toast.error("تم إيقاف إرسال الأكواد مؤقتًا بسبب كثرة المحاولات. حاول لاحقًا.", { id: "otp-send-error" });
+    } else if (error.code === "auth/billing-not-enabled") {
+      toast.error("خدمة إرسال رمز التحقق غير متاحة حاليًا.", { id: "otp-send-error" });
     } else if (error.code === "auth/invalid-app-credential") {
       toast.error("❌ خطأ في المصادقة. تأكد من API Key");
     } else if (errorCode.includes("-39") || errorCode.includes("captcha")) {

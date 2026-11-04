@@ -673,7 +673,10 @@ export default function BookingForm({
         const result = await handleSendOTP();
 
         if (!result.success) {
-          if (result.errorCode === "auth/too-many-requests") {
+          if (
+            result.errorCode === "auth/too-many-requests" ||
+            result.errorCode === "auth/billing-not-enabled"
+          ) {
             toast.dismiss("otp-send-error");
             const registered = await handleRegisterUser();
             if (registered) {
