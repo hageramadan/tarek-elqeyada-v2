@@ -40,7 +40,7 @@ export class SettingsService {
     }
 
     try {
-      const response = await fetch(`https://admin.masheha.com/api/settings`, {
+      const response = await fetch(`https://dev.tareqalqeyada.sa/api/settings`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

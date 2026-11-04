@@ -191,12 +191,12 @@ export default function DateSlider({ dates, selectedIndex, onSelect }: DateSlide
               className={cn(
                 "date-item shrink-0 px-4 py-2 rounded-xl text-center transition-all duration-300 cursor-pointer w-full max-w-xs",
                 isCenter 
-                  ? "scale-100 opacity-100 bg-[#E8F8FF8F] border-2 border-[#E8F8FF]  " 
+                  ? "scale-100 opacity-100 bg-[#F1EBFA] border-2 border-[#F1EBFA]  "
                   : "scale-90 opacity-40"
               )}
               style={{
-                backgroundColor: isCenter ? '#E8F8FF8F' : 'transparent',
-                border: isCenter ? '2px solid #E8F8FF' : 'none'
+                backgroundColor: isCenter ? '#F1EBFA' : 'transparent',
+                border: isCenter ? '2px solid #F1EBFA' : 'none'
               }}
               onClick={() => {
                 if (!isCenter) {

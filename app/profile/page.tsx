@@ -102,7 +102,7 @@ export default function ProfilePage() {
               className={cn(
                 "flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200",
                 activeTab === 'personal'
-                  ? "bg-[#012738] text-white shadow-md"
+                  ? "bg-[#6B46C1] text-white shadow-md"
                   : "bg-[#d2d6db6b] text-gray-600 hover:bg-[#D2D6DB] hover:text-gray-800"
               )}
             >
@@ -113,7 +113,7 @@ export default function ProfilePage() {
               className={cn(
                 "flex-1 py-3 px-4 rounded-lg text-sm font-medium transition-all duration-200",
                 activeTab === 'bookings'
-                  ? "bg-[#012738] text-white shadow-md"
+                  ? "bg-[#6B46C1] text-white shadow-md"
                   : "bg-[#d2d6db6b] text-gray-600 hover:bg-[#D2D6DB] hover:text-gray-800"
               )}
             >

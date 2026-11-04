@@ -133,7 +133,7 @@ export default function Stats({
           {features.map((feature, index) => (
             <div
               key={index}
-              className="flex items-center justify-center gap-1 lg:gap-3 p-1 lg:p-4 bg-[#0127380A] rounded-[8px] hover:bg-gray-200 transition-colors"
+              className="flex items-center justify-center gap-1 lg:gap-3 p-1 lg:p-4 bg-[#6B46C10A] rounded-[8px] hover:bg-gray-200 transition-colors"
             >
               <div className="">{feature.icon}</div>
               <div>

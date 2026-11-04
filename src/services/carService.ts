@@ -23,12 +23,34 @@ import {
   QuickPolicy,
 } from "@/src/types/car";
 import { CreateBookingRequest, CreateBookingResponse } from "../types/booking";
+import type { CarCatalogCategory, CarCatalogResponse } from "../types/carCatalog";
 
 // ============================================
 // CAR SERVICE - API Implementation
 // ============================================
 
 export class CarService extends ApiService {
+  private static catalogRequest: Promise<CarCatalogCategory[]> | null = null;
+  private static catalogTimestamp = 0;
+
+  static async getCarCategoriesWithCars(): Promise<CarCatalogCategory[]> {
+    if (!this.catalogRequest || Date.now() - this.catalogTimestamp >= this.CACHE_DURATION) {
+      this.catalogTimestamp = Date.now();
+      this.catalogRequest = this.get<ApiResponse<CarCatalogResponse>>(
+        "/v2/car-categories-with-cars",
+      ).then((response) => {
+        if (!response.result) {
+          throw new Error(response.message || "فشل في جلب السيارات");
+        }
+        return response.data.data;
+      }).catch((error) => {
+        this.catalogRequest = null;
+        throw error;
+      });
+    }
+    return this.catalogRequest;
+  }
+
   private static cachedRawData: DailyCarsResponse[] | null = null;
   private static cacheTimestamp: number | null = null;
   private static CACHE_DURATION = 5 * 60 * 1000;
@@ -233,6 +255,8 @@ export class CarService extends ApiService {
   }
 
   static clearCache(): void {
+    this.catalogRequest = null;
+    this.catalogTimestamp = 0;
     this.cachedRawData = null;
     this.cacheTimestamp = null;
   }

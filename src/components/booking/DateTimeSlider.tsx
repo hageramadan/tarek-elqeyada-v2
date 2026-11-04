@@ -261,7 +261,7 @@ export default function DateTimeSlider({
         className={cn(
           "shrink-0 px-2 py-1  text-center transition-all duration-300 cursor-pointer w-full",
           isCenter
-            ? "scale-100 opacity-100 bg-[#E8F8FF8F]"
+            ? "scale-100 opacity-100 bg-[#F1EBFA]"
             : "scale-90 opacity-40 bg-transparent",
         )}
         onClick={() => {
@@ -307,7 +307,7 @@ export default function DateTimeSlider({
         className={cn(
           "shrink-0 px-2 py-1  text-center transition-all duration-300 cursor-pointer w-full",
           isCenter
-            ? "scale-100 opacity-100 bg-[#E8F8FF8F]"
+            ? "scale-100 opacity-100 bg-[#F1EBFA]"
             : "scale-90 opacity-40 bg-transparent",
         )}
         onClick={() => {
@@ -367,7 +367,7 @@ export default function DateTimeSlider({
           onTouchEnd={handleDateTouchEnd}
         >
           {/* الخلفية الثابتة */}
-          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[32px] bg-[#E8F8FF8F] pointer-events-none z-0" />
+          <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[32px] bg-[#F1EBFA] pointer-events-none z-0" />
 
           {/* العناصر */}
           <div className="relative z-10 w-full">
@@ -394,7 +394,7 @@ export default function DateTimeSlider({
   onTouchEnd={handleTimeTouchEnd}
 >
   {/* الخلفية الثابتة */}
-  <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[32px] bg-[#E8F8FF8F] pointer-events-none z-0" />
+  <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-[32px] bg-[#F1EBFA] pointer-events-none z-0" />
 
   {/* العناصر */}
   <div className="relative z-10 w-full">

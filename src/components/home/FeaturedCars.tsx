@@ -1,110 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import { Card, CardContent } from "@/src/ui/card";
 import { Button } from "@/src/ui/button";
 import { FaCalendarDay, FaCalendarAlt } from "react-icons/fa";
-import Stats from "./Stats";
 import "swiper/css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { CarService } from "@/src/services/carService";
 import { Car } from "@/src/types/car";
-import {
-  DailyCarsResponse,
-  MonthlyCarsResponse,
-  MonthlyCar,
-} from "@/src/types/api";
-import { LuShieldCheck } from "react-icons/lu";
-import { CiDeliveryTruck } from "react-icons/ci";
-import { TbClockHour3 } from "react-icons/tb";
+import type { CarCatalogCategory, RentalPeriodType } from "@/src/types/carCatalog";
+import { filterCarCatalog } from "@/src/utils/carCatalog";
 import IconsFeatures from "./IconsFeatures";
-
-interface ProviderGroup {
-  providerId: number;
-  providerName: string;
-  providerImage: string;
-  acceptanceRate: number;
-  customerSatisfactionRate: number;
-  deliverySpeedRate: number;
-  city: string;
-  district: string;
-  averageRating: number;
-  countReviews: number;
-  cars: Car[];
-  quickPolicy: {
-    pickupWithinHourText: string;
-    deductibleText: string;
-    kmLimitText: string;
-  };
-  icons: {
-    id: number;
-    title: string;
-    image: string;
-  }[];
-}
-
-function ProviderStats({ provider }: { provider: ProviderGroup }) {
-  const features = provider.icons.map((icon) => ({
-    icon: (
-      <Image
-        src={icon.image}
-        alt={icon.title}
-        width={20}
-        height={20}
-        className="object-contain w-5 h-5 lg:w-7 lg:h-7"
-      />
-    ),
-    title: icon.title,
-  }));
-
-  const defaultFeatures = [
-    { icon: <LuShieldCheck className="text-xl" />, title: "بدون تأمين مسترد" },
-    { icon: <CiDeliveryTruck className="text-xl" />, title: "توصيل مجاني" },
-    {
-      icon: <TbClockHour3 className="text-xl" />,
-      title: "تأخير مجاني عند الإرجاع",
-    },
-  ];
-
-  return (
-    <Stats
-      providerName={provider.providerName}
-      providerImage={provider.providerImage || "/images/is.png"}
-      city={provider.city || "المدينة"}
-      district={provider.district || "الحي"}
-      averageRating={provider.averageRating || 0}
-      countReviews={provider.countReviews || 0}
-      acceptanceRate={provider.acceptanceRate || 0}
-      customerSatisfactionRate={provider.customerSatisfactionRate || 0}
-      deliverySpeedRate={provider.deliverySpeedRate || 0}
-      isVerified={true}
-      features={features.length > 0 ? features : defaultFeatures}
-    />
-  );
-}
 
 function CarCard({
   car,
   period,
   onClick,
 }: {
-  car: any;
+  car: Car;
   period: string;
   onClick: () => void;
 }) {
-  const price =
-    car.pricePerDayAfterDiscount ||
-    car.pricePerDay ||
-    car.monthly_price_after_discount ||
-    car.monthly_price;
-  const image = car.image_url || car.image;
+  const price = car.pricePerDayAfterDiscount ?? car.pricePerDay;
+  const image = car.image;
   const name = car.name;
-  const year = car.model_year || car.year;
-  const brand = car.brand?.name || car.brand || "";
-  const discount = car.discount || 0;
+  const year = car.year;
+  const discount = car.discount;
 
   return (
     <Card
@@ -161,171 +85,39 @@ interface FeaturedCarsProps {
 
 export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState("daily");
-  const [providerGroups, setProviderGroups] = useState<ProviderGroup[]>([]);
-  const [monthlyData, setMonthlyData] = useState<MonthlyCarsResponse | null>(
-    null,
-  );
+  const [activeTab, setActiveTab] = useState<RentalPeriodType>("daily");
+  const [categories, setCategories] = useState<CarCatalogCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
   const hasCalledOnLoad = useRef(false);
 
-  // ✅ استدعاء onLoad بعد تحميل البيانات وظهور Stats في DOM
+  const sections = useMemo(
+    () => filterCarCatalog(categories, activeTab),
+    [categories, activeTab],
+  );
+
   useEffect(() => {
-    if (!loading && !error && !hasCalledOnLoad.current && onLoad) {
-      const hasData = (activeTab === "daily" && providerGroups.length > 0) || 
-                    (activeTab === "monthly" && monthlyData !== null);
-      
-      if (hasData) {
-        console.log("✅ FeaturedCars: Data loaded! Waiting for Stats to mount...");
-        hasCalledOnLoad.current = true;
-        setIsDataLoaded(true);
-        
-        // ننتظر ظهور Stats في DOM
-        const checkStats = () => {
-          const statsElement = document.querySelector('[data-stats-loaded]');
-          if (statsElement) {
-            console.log("✅ Stats found in DOM! Calling onLoad...");
-            onLoad();
-            return true;
-          }
-          return false;
-        };
-
-        // نفحص فوراً
-        if (checkStats()) return;
-
-        // نفحص كل 100ms لمدة 3 ثواني
-        let attempts = 0;
-        const maxAttempts = 30; // 30 * 100ms = 3 seconds
-        const interval = setInterval(() => {
-          attempts++;
-          if (checkStats() || attempts >= maxAttempts) {
-            clearInterval(interval);
-            if (attempts >= maxAttempts) {
-              console.log("⚠️ Stats not found after 3 seconds, calling onLoad anyway...");
-              onLoad();
-            }
-          }
-        }, 100);
-
-        return () => clearInterval(interval);
-      }
-    }
-  }, [loading, error, activeTab, providerGroups, monthlyData, onLoad]);
-
-  // إذا لم توجد بيانات ولكن التحميل انتهى
-  useEffect(() => {
-    if (!loading && !error && !hasCalledOnLoad.current && onLoad) {
-      const hasData = (activeTab === "daily" && providerGroups.length > 0) || 
-                    (activeTab === "monthly" && monthlyData !== null);
-      
-      if (!hasData) {
-        console.log("⚠️ FeaturedCars: No data but loading finished. Calling onLoad after delay...");
-        hasCalledOnLoad.current = true;
-        setIsDataLoaded(true);
-        
-        setTimeout(() => {
-          onLoad();
-        }, 500);
-      }
-    }
-  }, [loading, error, activeTab, providerGroups, monthlyData, onLoad]);
-
-  // استخدام useCallback لتثبيت الدالة
-  const fetchData = useCallback(async (tab: string) => {
-    try {
-      setLoading(true);
-      setError(null);
-      if (tab === "daily") {
-        const data = await CarService.getDailyCarsRaw();
-        const groups = transformToProviderGroups(data);
-        setProviderGroups(groups);
-        setMonthlyData(null);
-      } else {
-        const data = await CarService.getMonthlyCars();
-        setMonthlyData(data);
-        setProviderGroups([]);
-      }
-    } catch (err) {
-      console.error("Error fetching data:", err);
-      setError("حدث خطأ في تحميل البيانات");
-    } finally {
-      setLoading(false);
-    }
+    let cancelled = false;
+    CarService.getCarCategoriesWithCars()
+      .then((data) => {
+        if (!cancelled) setCategories(data);
+      })
+      .catch((err) => {
+        console.error("Error fetching car catalog:", err);
+        if (!cancelled) setError("حدث خطأ في تحميل البيانات");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => { cancelled = true; };
   }, []);
 
-  const transformToProviderGroups = (
-    data: DailyCarsResponse[],
-  ): ProviderGroup[] => {
-    return data.map((provider) => ({
-      providerId: provider.id,
-      providerName: provider.name,
-      providerImage: provider.image_url,
-      acceptanceRate: provider.acceptance_rate || 0,
-      customerSatisfactionRate: provider.customer_satisfaction_rate || 0,
-      deliverySpeedRate: provider.delivery_speed_rate || 0,
-      city: provider.city || "المدينة",
-      district: provider.district || "الحي",
-      averageRating: provider.average_rating || 0,
-      countReviews: provider.count_reviews || 0,
-      quickPolicy: {
-        pickupWithinHourText:
-          provider.quick_policy?.pickup_within_hour_text || "",
-        deductibleText: provider.quick_policy?.deductible_text || "",
-        kmLimitText: provider.quick_policy?.km_limit_text || "",
-      },
-      icons:
-        provider.icons?.map((icon) => ({
-          id: icon.id,
-          title: icon.title,
-          image: icon.icon || icon.image,
-        })) || [],
-      cars: provider.cars.map((carAPI) => ({
-        id: carAPI.id,
-        name: carAPI.name,
-        brand: carAPI.brand?.name || "غير معروف",
-        brandLogo: carAPI.brand?.image_url || "",
-        model: carAPI.brand?.name || "",
-        year: carAPI.model_year,
-        pricePerDay: carAPI.price_per_day,
-        pricePerDayAfterDiscount: carAPI.price_per_day_after_discount,
-        discount: carAPI.discount,
-        image: carAPI.image_url,
-        category: carAPI.car_category?.name || "غير معروف",
-        categoryId: carAPI.car_category?.id,
-        minimumDays: carAPI.minimum_days,
-        isFeatured: carAPI.is_featured,
-        status: carAPI.status,
-        providerId: provider.id,
-        providerName: provider.name,
-        providerImage: provider.image_url,
-        acceptanceRate: provider.acceptance_rate,
-        customerSatisfactionRate: provider.customer_satisfaction_rate,
-        deliverySpeedRate: provider.delivery_speed_rate,
-        quickPolicy: {
-          pickupWithinHourText:
-            provider.quick_policy?.pickup_within_hour_text || "",
-          deductibleText: provider.quick_policy?.deductible_text || "",
-          kmLimitText: provider.quick_policy?.km_limit_text || "",
-        },
-        icons:
-          provider.icons?.map((icon) => ({
-            id: icon.id,
-            title: icon.title,
-            image: icon.icon || icon.image,
-          })) || [],
-        averageRating: provider.average_rating,
-        countReviews: provider.count_reviews,
-      })),
-    }));
-  };
-
-  // تحميل البيانات عند تغيير التاب
   useEffect(() => {
-    fetchData(activeTab);
-  }, [activeTab, fetchData]);
+    if (!loading && !hasCalledOnLoad.current && onLoad) {
+      hasCalledOnLoad.current = true;
+      onLoad();
+    }
+  }, [loading, onLoad]);
 
   const handleCarClick = (carId: string | number, providerId?: number) => {
     if (!carId) {
@@ -342,24 +134,15 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
     router.push(url);
   };
 
-  const renderMonthlySections = () => {
-    if (!monthlyData) return null;
-
-    const sections = Object.entries(monthlyData)
-      .filter(([key, value]) => value?.cars?.length > 0)
-      .map(([key, value]) => ({
-        key,
-        title: value.title || key,
-        data: value,
-      }));
+  const renderSections = () => {
+    if (sections.length === 0) return null;
 
     return (
       <>
-        <IconsFeatures />
-        {sections.map(({ key, title, data }) => (
-          <div key={key} className="mb-8 lg:mb-12">
+        {sections.map(({ id, name, cars }) => (
+          <div key={id} className="mb-8 lg:mb-12">
             <h3 className="text-xl lg:text-2xl font-bold text-gray-800 my-2">
-              {title}
+              {name}
             </h3>
             <Swiper
               modules={[Autoplay]}
@@ -380,12 +163,12 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
               grabCursor={true}
               speed={800}
             >
-              {data.cars.map((car: MonthlyCar) => (
-                <SwiperSlide key={car.id} className="mb-5 lg:mb-12">
+              {cars.map((car) => (
+                <SwiperSlide key={`${car.providerId}-${car.id}`} className="mb-5 lg:mb-12">
                   <CarCard
                     car={car}
-                    period="شهرياً"
-                    onClick={() => handleCarClick(car.id, car.office?.id)}
+                    period={activeTab === "daily" ? "يومياً" : "شهرياً"}
+                    onClick={() => handleCarClick(car.id, car.providerId)}
                   />
                 </SwiperSlide>
               ))}
@@ -426,6 +209,7 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
         <div className="flex justify-center gap-4 mb-10">
           <Button
             onClick={() => setActiveTab("daily")}
+            aria-pressed={activeTab === "daily"}
             className={`px-6 py-5 text-base lg:px-8 lg:py-6 lg:text-lg rounded-full transition-all duration-300 ${
               activeTab === "daily"
                 ? "bg-primary text-white shadow-lg shadow-primary/30"
@@ -438,6 +222,7 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
 
           <Button
             onClick={() => setActiveTab("monthly")}
+            aria-pressed={activeTab === "monthly"}
             className={`px-6 py-5 text-base lg:px-8 lg:py-6 lg:text-lg rounded-full transition-all duration-300 ${
               activeTab === "monthly"
                 ? "bg-primary text-white shadow-lg shadow-primary/30"
@@ -449,66 +234,16 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
           </Button>
         </div>
 
-        {activeTab === "daily" ? (
-          providerGroups.length > 0 ? (
-            providerGroups.map((group) => (
-              <div key={group.providerId} className="mb-10">
-                <ProviderStats provider={group} />
+        <IconsFeatures />
 
-                {group.cars.length > 0 ? (
-                  <Swiper
-                    modules={[Autoplay]}
-                    spaceBetween={10}
-                    slidesPerView={2.2}
-                    autoplay={{ delay: 4000, disableOnInteraction: false }}
-                    breakpoints={{
-                      480: { slidesPerView: 2.5, spaceBetween: 7 },
-                      640: { slidesPerView: 2.5, spaceBetween: 7 },
-                      768: { slidesPerView: 3, spaceBetween: 16 },
-                      1024: { slidesPerView: 4.5, spaceBetween: 20 },
-                    }}
-                    className="px-4  max-h-75 md:max-h-87 lg:max-h-112"
-                    dir="rtl"
-                    touchRatio={1.5}
-                    resistance={true}
-                    resistanceRatio={0.85}
-                    grabCursor={true}
-                    speed={800}
-                  >
-                    {group.cars.map((car) => (
-                      <SwiperSlide key={car.id} className="mb-1">
-                        <CarCard
-                          car={car}
-                          period="يومياً"
-                          onClick={() => handleCarClick(car.id, car.providerId)}
-                        />
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                ) : (
-                  <div className="text-center py-8 bg-gray-50 rounded-xl">
-                    <p className="text-gray-400">
-                      لا توجد سيارات متاحة لهذه الشركة
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">
-                لا توجد شركات سيارات متاحة حالياً
-              </p>
-            </div>
-          )
-        ) : (
-          renderMonthlySections() || (
-            <div className="text-center py-12">
-              <p className="text-gray-500 text-lg">
-                لا توجد سيارات شهرية متاحة حالياً
-              </p>
-            </div>
-          )
+        {renderSections() || (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              {activeTab === "daily"
+                ? "لا توجد سيارات يومية متاحة حالياً"
+                : "لا توجد سيارات شهرية متاحة حالياً"}
+            </p>
+          </div>
         )}
       </div>
     </section>

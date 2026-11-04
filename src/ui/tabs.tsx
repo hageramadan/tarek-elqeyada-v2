@@ -59,7 +59,7 @@ function TabsTrigger({ className, ...props }: TabsPrimitive.Tab.Props) {
       className={cn(
         "relative inline-flex flex-1 items-center justify-center gap-1.5 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200",
         // استخدام data-state للتحكم في الحالة
-        "data-[state=active]:bg-[#012738] data-[state=active]:text-white data-[state=active]:shadow-md",
+        "data-[state=active]:bg-[#6B46C1] data-[state=active]:text-white data-[state=active]:shadow-md",
         "data-[state=inactive]:bg-[#b6b6b6] data-[state=inactive]:text-gray-600 data-[state=inactive]:hover:bg-[#D2D6DB] data-[state=inactive]:hover:text-gray-800",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50",
         "disabled:pointer-events-none disabled:opacity-50",

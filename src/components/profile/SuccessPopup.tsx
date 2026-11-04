@@ -53,7 +53,7 @@ export default function SuccessPopup({
         </p>
         <button
           onClick={handleAction}
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#012738] text-white rounded-xl hover:bg-[#012738]/90 transition-all hover:scale-[1.02]"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#6B46C1] text-white rounded-xl hover:bg-[#6B46C1]/90 transition-all hover:scale-[1.02]"
         >
           <FaHome className="h-4 w-4" />
           <span className="font-medium">{buttonText}</span>

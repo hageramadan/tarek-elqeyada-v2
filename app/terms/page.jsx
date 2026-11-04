@@ -99,7 +99,7 @@ export default function TermsPage() {
           </section>
 
           <div className="border-t border-gray-200 pt-6 text-center text-gray-500 text-sm">
-            <p>© {new Date().getFullYear()} مشيها لتأجير السيارات. جميع الحقوق محفوظة</p>
+            <p>© {new Date().getFullYear()} طريق القيادة لتأجير السيارات. جميع الحقوق محفوظة</p>
           </div>
         </div>
       </div>

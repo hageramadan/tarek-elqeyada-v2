@@ -218,7 +218,7 @@ const handleSubmit = async () => {
           </label>
           <div className="flex items-center gap-2">
             <p className="text-gray-500 text-sm">{days} أيام</p>
-            <div className="flex items-center border-2 rounded-xl overflow-hidden w-fit border-gray-200 focus-within:border-[#012738] transition-colors">
+            <div className="flex items-center border-2 rounded-xl overflow-hidden w-fit border-gray-200 focus-within:border-[#6B46C1] transition-colors">
               <button
                 type="button"
                 onClick={decrementDays}
@@ -266,7 +266,7 @@ const handleSubmit = async () => {
         {/* حالة التحميل */}
         {isLoading && (
           <div className="text-center py-4">
-            <div className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-[#012738] border-r-transparent"></div>
+            <div className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-[#6B46C1] border-r-transparent"></div>
           </div>
         )}
 
@@ -282,7 +282,7 @@ const handleSubmit = async () => {
 
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm text-gray-500">تاريخ التسليم الجديد</p>
-              <div className="font-medium text-[#012738] text-sm text-left">
+              <div className="font-medium text-[#6B46C1] text-sm text-left">
                 <p>{newReturnDate}</p>
               </div>
             </div>
@@ -316,7 +316,7 @@ const handleSubmit = async () => {
             </div>
             <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-200">
               <span>الإجمالي</span>
-              <span className="text-[#012738]">
+              <span className="text-[#6B46C1]">
                 {(
                   extensionData.extension_price +
                   parseFloat(extensionData.tax_amount)
@@ -332,7 +332,7 @@ const handleSubmit = async () => {
           <button
             onClick={handleSubmit}
             disabled={isSubmitting || isRedirecting || isLoading || !extensionData}
-            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#012738] text-white rounded-xl hover:bg-[#012738]/90 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-[#6B46C1] text-white rounded-xl hover:bg-[#6B46C1]/90 transition-all hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSubmitting || isRedirecting ? (
               <>

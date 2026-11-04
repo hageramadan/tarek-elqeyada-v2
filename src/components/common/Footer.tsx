@@ -21,7 +21,7 @@ export default function Footer() {
     const fetchSettings = async () => {
       try {
         const response = await fetch(
-          `https://admin.masheha.com/api/settings`,
+          `https://dev.tareqalqeyada.sa/api/settings`,
           {
             method: "GET",
             headers: {
@@ -46,7 +46,7 @@ export default function Footer() {
         setSettings({
           phone: "0566666364",
           email: "Masheha.sa@gmail.com",
-          name: "مشيها",
+          name: "طريق القيادة",
           light_logo: "/logo1.png",
         });
       } finally {
@@ -60,7 +60,7 @@ export default function Footer() {
   // عرض حالة التحميل (نفس التصميم الحالي)
   if (loading) {
     return (
-      <footer className="bg-gray-900 text-white">
+      <footer className="bg-[#211039] text-white">
         <div className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="col-span-2 lg:col-span-1">
@@ -90,7 +90,7 @@ export default function Footer() {
             </div>
           </div>
           <div className="border-t border-gray-600 mt-8 pt-4 text-center text-gray-400">
-            © جميع الحقوق محفوظة | مشيها 2025
+            © جميع الحقوق محفوظة | طريق القيادة 2025
           </div>
         </div>
       </footer>
@@ -98,7 +98,7 @@ export default function Footer() {
   }
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-[#211039] text-white">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {/* الشعار - بدون تغيير */}
@@ -159,7 +159,7 @@ export default function Footer() {
               {/* رقم الهاتف */}
               <a
                 href={`tel:${settings?.phone || "0566666364"}`}
-                className="flex items-center gap-3 p-2 bg-[#5CE1E6] rounded-full hover:scale-105 transition-transform"
+                className="flex items-center gap-3 p-2 bg-primary rounded-full hover:bg-[#8057D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#BCA2F0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#211039] hover:scale-105 transition-all duration-200"
                 title={settings?.phone || "0566666364"}
               >
                 <FaPhone className="text-white text-lg w-5 h-5" />
@@ -168,7 +168,7 @@ export default function Footer() {
               {/* البريد الإلكتروني */}
               <a
                 href={`mailto:${settings?.email || "Masheha.sa@gmail.com"}`}
-                className="flex items-center gap-3 p-2 bg-[#5CE1E6] rounded-full hover:scale-105 transition-transform"
+                className="flex items-center gap-3 p-2 bg-primary rounded-full hover:bg-[#8057D5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#BCA2F0] focus-visible:ring-offset-2 focus-visible:ring-offset-[#211039] hover:scale-105 transition-all duration-200"
                 title={settings?.email || "Masheha.sa@gmail.com"}
               >
                 <FaEnvelope className="text-white text-lg w-5 h-5" />
@@ -178,7 +178,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-600 mt-8 pt-4 text-center text-gray-400">
-          © جميع الحقوق محفوظة | {settings?.name || "مشيها"} 2025
+          © جميع الحقوق محفوظة | {settings?.name || "طريق القيادة"} 2025
         </div>
       </div>
     </footer>

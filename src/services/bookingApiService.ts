@@ -222,7 +222,7 @@ export interface BookingDetail {
 }
 
 // تكوين الـ API
-const BASE_URL = 'https://admin.masheha.com/api';
+const BASE_URL = 'https://dev.tareqalqeyada.sa/api';
 
 // دالة للحصول على التوكن
 function getToken(): string | null {

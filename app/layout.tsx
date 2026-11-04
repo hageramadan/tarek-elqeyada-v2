@@ -15,7 +15,7 @@ const almarai = Almarai({
 });
 
 export const metadata: Metadata = {
-  title: "مشيها",
+  title: "طريق القيادة",
   description: "أفضل خدمة لتأجير السيارات في المنطقة",
   icons: {
     icon: [{ url: "/logo1.png", type: "image/png" }],

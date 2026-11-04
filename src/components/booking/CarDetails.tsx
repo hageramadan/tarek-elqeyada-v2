@@ -69,7 +69,7 @@ export default function CarDetails({
         <div className="md:col-span-2 space-y-1 w-full mx-auto flex flex-col justify-center">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm lg:text-base font-bold text-gray-600 ms-1">
+              <span className="text-sm lg:text-base font-bold text-[#38205E] ms-1">
                 {car.year}
               </span>
               <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-gray-800 line-clamp-1">

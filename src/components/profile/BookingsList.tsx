@@ -250,13 +250,13 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
           className={cn(
             "flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 relative",
             filter === "current"
-              ? "text-[#012738]"
+              ? "text-[#6B46C1]"
               : "text-gray-600 hover:text-gray-800",
           )}
         >
           <span>الحالية</span>
           {filter === "current" && (
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#012738]"></span>
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6B46C1]"></span>
           )}
         </button>
         <button
@@ -268,20 +268,20 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
           className={cn(
             "flex-1 py-3 px-4 text-sm font-medium transition-all duration-200 relative",
             filter === "finished"
-              ? "text-[#012738]"
+              ? "text-[#6B46C1]"
               : "text-gray-600 hover:text-gray-800",
           )}
         >
           <span>قائمة الحجوزات</span>
           {filter === "finished" && (
-            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#012738]"></span>
+            <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#6B46C1]"></span>
           )}
         </button>
       </div>
 
       {loading && (
         <div className="text-center py-12">
-          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#012738] border-r-transparent"></div>
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-[#6B46C1] border-r-transparent"></div>
         </div>
       )}
 
@@ -294,7 +294,7 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
                   key={booking.id}
                   onClick={() => setSelectedBookingId(booking.id)}
                   className={cn(
-                    "bg-white rounded-2xl shadow-md border border-gray-100 p-4 hover:shadow-lg hover:border-[#012738]/30 transition-all cursor-pointer",
+                    "bg-white rounded-2xl shadow-md border border-gray-100 p-4 hover:shadow-lg hover:border-[#6B46C1]/30 transition-all cursor-pointer",
                     "transform transition-all duration-500 ease-out",
                     isVisible
                       ? "opacity-100 translate-y-0"
@@ -333,7 +333,7 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
                           </p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
-                          <span className="text-sm lg:text-xl font-bold text-[#012738]">
+                          <span className="text-sm lg:text-xl font-bold text-[#6B46C1]">
                             {booking.total_amount}
                           </span>
                           <Image
@@ -418,7 +418,7 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
                     "p-2 rounded-lg border transition-all duration-200",
                     currentPage === 1
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-[#012738] border-[#012738] hover:bg-[#012738] hover:text-white",
+                      : "bg-white text-[#6B46C1] border-[#6B46C1] hover:bg-[#6B46C1] hover:text-white",
                   )}
                   aria-label="الصفحة السابقة"
                 >
@@ -445,7 +445,7 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
                         className={cn(
                           "w-9 h-9 rounded-lg text-sm font-medium transition-all duration-200",
                           currentPage === pageNum
-                            ? "bg-[#012738] text-white"
+                            ? "bg-[#6B46C1] text-white"
                             : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200",
                         )}
                       >
@@ -462,7 +462,7 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
                     "p-2 rounded-lg border transition-all duration-200",
                     currentPage === totalPages
                       ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                      : "bg-white text-[#012738] border-[#012738] hover:bg-[#012738] hover:text-white",
+                      : "bg-white text-[#6B46C1] border-[#6B46C1] hover:bg-[#6B46C1] hover:text-white",
                   )}
                   aria-label="الصفحة التالية"
                 >

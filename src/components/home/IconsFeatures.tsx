@@ -32,7 +32,7 @@ export default function IconsFeatures() {
       setLoading(true);
       setError(null);
       try {
-        const response = await fetch("https://admin.masheha.com/api/icons", {
+        const response = await fetch("https://dev.tareqalqeyada.sa/api/icons", {
           headers: {
             "accept-language": "ar",
           },
@@ -118,7 +118,7 @@ export default function IconsFeatures() {
           {remainingIcons.map((icon) => (
             <div
               key={icon.id}
-              className="flex items-center justify-center gap-1 lg:gap-3 p-1 lg:p-4 bg-[#0127380A] rounded-[8px] hover:bg-gray-200 transition-colors"
+              className="flex items-center justify-center gap-1 lg:gap-3 p-1 lg:p-4 bg-[#6B46C10A] rounded-[8px] hover:bg-gray-200 transition-colors"
             >
               <Image
                 src={icon.image}

@@ -130,7 +130,7 @@ function SelectItem({
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full cursor-pointer items-center justify-between gap-2 rounded-[8px] py-2 ps-3 pe-3 text-sm font-medium outline-hidden transition-all duration-150 hover:text-[#012738] focus:bg-blue-50 focus:text-[#012738] data-[selected=true]:bg-blue-50 data-[selected=true]:text-[#012738] data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "relative flex w-full cursor-pointer items-center justify-between gap-2 rounded-[8px] py-2 ps-3 pe-3 text-sm font-medium outline-hidden transition-all duration-150 hover:text-[#6B46C1] focus:bg-blue-50 focus:text-[#6B46C1] data-[selected=true]:bg-blue-50 data-[selected=true]:text-[#6B46C1] data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -140,7 +140,7 @@ function SelectItem({
       </SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={
-          <span className="pointer-events-none flex size-4 items-center justify-center text-[#012738]">
+          <span className="pointer-events-none flex size-4 items-center justify-center text-[#6B46C1]">
             <CheckIcon className="size-4" />
           </span>
         }

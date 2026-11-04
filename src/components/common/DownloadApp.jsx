@@ -11,10 +11,10 @@ export default function DownloadApp() {
           <div className="flex gap-3 lg:gap-4 justify-start">
             {/* Google Play */}
             <Link
-              href="https://play.google.com/store/apps/details?id=com.tawajood.masheha&pcampaignid=web_share"
+              href="https://play.google.com/store/apps/details?id=com.tareek.qeyada"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-primary rounded-[8px] lg:rounded-xl px-2 lg:px-4 py-1 lg:py-1 flex items-center gap-2 lg:gap-2 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              className="bg-[color-mix(in_srgb,var(--primary),black_15%)] hover:bg-[color-mix(in_srgb,var(--primary),black_25%)] rounded-[8px] lg:rounded-xl px-2 lg:px-4 py-1 lg:py-1 flex items-center gap-2 lg:gap-2 transition-all duration-300 hover:scale-105 hover:shadow-xl"
             >
              
               <div className="text-end">
@@ -27,10 +27,10 @@ export default function DownloadApp() {
 
             {/* App Store */}
             <Link
-              href="https://apps.apple.com/eg/app/masheha-%D9%85%D8%B4%D9%8A%D9%87%D8%A7/id6751540166"
+              href="https://apps.apple.com/eg/app/%D8%B7%D8%B1%D9%8A%D9%82-%D8%A7%D9%84%D9%82%D9%8A%D8%A7%D8%AF%D9%87-%D9%84%D8%AA%D8%A3%D8%AC%D9%8A%D8%B1-%D8%A7%D9%84%D8%B3%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA/id6743724845"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-primary  rounded-[8px] lg:rounded-xl px-2 lg:px-4 py-1 lg:py-1 flex items-center gap-2 lg:gap-4 transition-all duration-300 hover:scale-105 hover:shadow-xl"
+              className="bg-[color-mix(in_srgb,var(--primary),black_15%)] hover:bg-[color-mix(in_srgb,var(--primary),black_25%)]  rounded-[8px] lg:rounded-xl px-2 lg:px-4 py-1 lg:py-1 flex items-center gap-2 lg:gap-4 transition-all duration-300 hover:scale-105 hover:shadow-xl"
             >
               
               <div className="text-end">

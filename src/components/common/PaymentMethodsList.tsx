@@ -3,6 +3,7 @@
 "use client";
 
 import Image from "next/image";
+import { HandCoins } from "lucide-react";
 import { cn } from "@/src/lib/utils";
 import { useState, useEffect } from "react";
 import { CarService } from "@/src/services/carService";
@@ -89,6 +90,7 @@ export default function PaymentMethodsList({
     <div className=" grid grid-cols-2 lg:grid-cols-2 gap-3">
       {paymentMethods.map((method) => {
         const isSelected = selectedMethod === method.id;
+        const isCashPayment = /cash|نقد|استلام|توصيل/i.test(method.name);
 
         return (
           <button
@@ -103,6 +105,9 @@ export default function PaymentMethodsList({
             )}
           >
             <div className="w-9 lg:w-12 h-7 shrink-0 flex items-center justify-center">
+              {isCashPayment ? (
+                <HandCoins className="w-7 h-7 text-primary" aria-hidden="true" />
+              ) : (
               <Image
                 src={method.image}
                 alt={method.name}
@@ -115,6 +120,7 @@ export default function PaymentMethodsList({
                   target.src = "/images/payment/visa.png";
                 }}
               />
+              )}
             </div>
 
             <div className="flex-1">

@@ -199,7 +199,7 @@ export default function PaymentPopup({
             className={cn(
               "flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl transition-all hover:scale-[1.02]",
               tempSelected && !isSubmitting && !isLoading
-                ? "bg-[#012738] text-white hover:bg-[#012738]/90"
+                ? "bg-[#6B46C1] text-white hover:bg-[#6B46C1]/90"
                 : "bg-gray-300 text-gray-500 cursor-not-allowed"
             )}
           >
