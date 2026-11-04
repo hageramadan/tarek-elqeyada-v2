@@ -684,7 +684,7 @@ export default function BookingForm({
               setIsIdentityVerified(false);
               setShowOTPInput(false);
               setIsOTPPopupOpen(false);
-              toast.success("تم تسجيل الحساب بدون تأكيد رقم الجوال");
+              toast.success("تم تسجيل الحساب");
             } else {
               toast.error("تعذر تسجيل الحساب. حاول لاحقًا.");
             }
