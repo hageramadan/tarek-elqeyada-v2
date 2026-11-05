@@ -1,88 +1,17 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState, useEffect, useMemo, useRef } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
-import { Card, CardContent } from "@/src/ui/card";
-import { Button } from "@/src/ui/button";
-import { FaCalendarDay, FaCalendarWeek, FaCalendarAlt } from "react-icons/fa";
+import RentalPeriodTabs from "./RentalPeriodTabs";
 import "swiper/css";
-import Image from "next/image";
+import CarCard from "./CarCard";
 import { useRouter } from "next/navigation";
 import { CarService } from "@/src/services/carService";
-import { Car } from "@/src/types/car";
+import { IconsService } from "@/src/services/iconsService";
+import type { FeatureIcon } from "@/src/types/featureIcon";
 import type { CarCatalogCategory, RentalPeriodType } from "@/src/types/carCatalog";
 import { filterCarCatalog } from "@/src/utils/carCatalog";
 import IconsFeatures from "./IconsFeatures";
-
-function CarCard({
-  car,
-  period,
-  onClick,
-}: {
-  car: Car;
-  period: string;
-  onClick: () => void;
-}) {
-  const price = car.pricePerDayAfterDiscount ?? car.pricePerDay;
-  const image = car.image;
-  const name = car.name;
-  const year = car.year;
-  const discount = Math.max(0, car.pricePerDay - price);
-
-  return (
-    <Card
-      onClick={onClick}
-      className="hover:shadow-xl bg-white transition-all duration-300 hover:-translate-y-2 rounded-xl my-6 cursor-pointer"
-    >
-      <CardContent className="bg-white p-4">
-        <div className="h-28 lg:h-48 rounded-xl flex items-center justify-center relative overflow-hidden">
-          <Image
-            src={image}
-            alt={name}
-            width={300}
-            height={200}
-            className="object-contain"
-            priority
-          />
-          {discount > 0 && (
-            <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full">
-              خصم {discount} ريال
-            </span>
-          )}
-        </div>
-
-        <div className="mt-4">
-          <div className="flex flex-col items-center justify-center gap-1">
-            <div className="flex items-center justify-center gap-2">
-              <h3 className="text-sm lg:text-xl font-bold text-primary line-clamp-1">
-                {name}
-              </h3>
-            </div>
-            <span className="w-full border-b border-gray-200 mb-1 md:mb-8 pb-2 md:pb-4 text-center text-[#0079AB] font-bold text-sm md:text-base">
-              {year}
-            </span>
-          </div>
-
-          <div className="flex items-center justify-center gap-2">
-            {car.pricePerDay > price && (
-              <del className="text-xs lg:text-base text-gray-500" aria-label="السعر قبل الخصم">
-                {car.pricePerDay}
-              </del>
-            )}
-            <span className="text-sm lg:text-2xl font-bold text-[#4b398e]">
-              {price}
-            </span>
-            <div className="flex lg:flex-col items-center">
-              <span className="text-xs lg:text-sm font-semibold text-[#4b398e]">ر.س</span>
-              <span className="text-xs text-[#4b398e] font-semibold">/ {period}</span>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
 
 interface FeaturedCarsProps {
   onLoad?: () => void;
@@ -92,6 +21,7 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<RentalPeriodType>("daily");
   const [categories, setCategories] = useState<CarCatalogCategory[]>([]);
+  const [icons, setIcons] = useState<FeatureIcon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasCalledOnLoad = useRef(false);
@@ -103,17 +33,28 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
 
   useEffect(() => {
     let cancelled = false;
-    CarService.getCarCategoriesWithCars()
-      .then((data) => {
-        if (!cancelled) setCategories(data);
-      })
-      .catch((err) => {
-        console.error("Error fetching car catalog:", err);
-        if (!cancelled) setError("حدث خطأ في تحميل البيانات");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    const loadContent = async () => {
+      const [catalogResult, iconsResult] = await Promise.allSettled([
+        CarService.getCarCategoriesWithCars(),
+        IconsService.getIcons(),
+      ]);
+      if (cancelled) return;
+
+      if (catalogResult.status === 'fulfilled') {
+        setCategories(catalogResult.value);
+      } else {
+
+        setError('حدث خطأ في تحميل البيانات');
+      }
+
+      if (iconsResult.status === 'fulfilled') {
+        setIcons(iconsResult.value);
+      } else {
+
+      }
+      setLoading(false);
+    };
+    loadContent();
     return () => { cancelled = true; };
   }, []);
 
@@ -126,12 +67,12 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
 
   const handleCarClick = (carId: string | number, providerId?: number) => {
     if (!carId) {
-      console.error("❌ Missing carId");
+
       return;
     }
 
     if (!providerId) {
-      console.error("❌ Missing providerId for car:", carId);
+
       return;
     }
 
@@ -144,7 +85,7 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
 
     return (
       <>
-        {sections.map(({ id, name, cars }) => (
+        {sections.map(({ id, name, cars }, sectionIndex) => (
           <div key={id} className="mb-8 lg:mb-12">
             <h3 className="text-xl lg:text-2xl font-bold text-gray-800 my-2">
               {name}
@@ -168,10 +109,11 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
               grabCursor={true}
               speed={800}
             >
-              {cars.map((car) => (
+              {cars.map((car, carIndex) => (
                 <SwiperSlide key={`${car.providerId}-${car.id}`} className="mb-5 lg:mb-12">
                   <CarCard
                     car={car}
+                    priority={sectionIndex === 0 && carIndex < 3}
                     period={{ daily: "يومياً", weekly: "أسبوعياً", monthly: "شهرياً" }[activeTab]}
                     onClick={() => handleCarClick(car.id, car.providerId)}
                   />
@@ -211,48 +153,9 @@ export default function FeaturedCars({ onLoad }: FeaturedCarsProps) {
   return (
     <section className="py-2 pt-4 lg:pt-8" data-featured-cars-loaded>
       <div className="container mx-auto px-2">
-        <div className="flex flex-wrap justify-center gap-3 lg:gap-4 mb-10">
-          <Button
-            onClick={() => setActiveTab("daily")}
-            aria-pressed={activeTab === "daily"}
-            className={`px-6 py-5 text-base lg:px-8 lg:py-6 lg:text-lg rounded-full transition-all duration-300 ${
-              activeTab === "daily"
-                ? "bg-primary text-white shadow-lg shadow-primary/30"
-                : "bg-white text-gray-600 border-2 border-gray-200 hover:border-primary hover:text-primary"
-            }`}
-          >
-            <FaCalendarDay className="ml-2" />
-            تأجير يومي
-          </Button>
+        <RentalPeriodTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
-          <Button
-            onClick={() => setActiveTab("weekly")}
-            aria-pressed={activeTab === "weekly"}
-            className={`px-6 py-5 text-base lg:px-8 lg:py-6 lg:text-lg rounded-full transition-all duration-300 ${
-              activeTab === "weekly"
-                ? "bg-primary text-white shadow-lg shadow-primary/30"
-                : "bg-white text-gray-600 border-2 border-gray-200 hover:border-primary hover:text-primary"
-            }`}
-          >
-            <FaCalendarWeek className="ml-2" />
-            تأجير أسبوعي
-          </Button>
-
-          <Button
-            onClick={() => setActiveTab("monthly")}
-            aria-pressed={activeTab === "monthly"}
-            className={`px-6 py-5 text-base lg:px-8 lg:py-6 lg:text-lg rounded-full transition-all duration-300 ${
-              activeTab === "monthly"
-                ? "bg-primary text-white shadow-lg shadow-primary/30"
-                : "bg-white text-gray-600 border-2 border-gray-200 hover:border-primary hover:text-primary"
-            }`}
-          >
-            <FaCalendarAlt className="ml-2" />
-            تأجير شهري
-          </Button>
-        </div>
-
-        <IconsFeatures />
+        <IconsFeatures icons={icons} />
 
         {renderSections() || (
           <div className="text-center py-12">

@@ -55,14 +55,13 @@ export default function GoogleMapPicker({
       } else {
         setAddress(`موقع محدد (${lat.toFixed(6)}, ${lng.toFixed(6)})`);
       }
-    } catch (error) {
-      console.error('Error getting address:', error);
+    } catch {
+
       setAddress(`موقع محدد (${lat.toFixed(6)}, ${lng.toFixed(6)})`);
     } finally {
       setIsLoading(false);
     }
   };
-
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -83,7 +82,7 @@ export default function GoogleMapPicker({
       };
 
       script.onerror = () => {
-        console.error('Failed to load Google Maps API');
+
       };
 
       document.head.appendChild(script);
@@ -91,7 +90,6 @@ export default function GoogleMapPicker({
 
     loadGoogleMapsScript();
   }, []);
-
 
   useEffect(() => {
     if (!scriptLoaded || !mapRef.current || !isOpen) return;
@@ -111,7 +109,6 @@ export default function GoogleMapPicker({
 
       mapInstanceRef.current = map;
 
-      
       const marker = new google.maps.Marker({
         position: { lat: position.lat, lng: position.lng },
         map: map,
@@ -120,7 +117,6 @@ export default function GoogleMapPicker({
       });
       markerRef.current = marker;
 
-      
       getAddressFromLatLng(position.lat, position.lng);
 
       marker.addListener('dragend', () => {
@@ -145,11 +141,9 @@ export default function GoogleMapPicker({
       });
     };
 
-   
     const timeoutId = setTimeout(initMap, 100);
     return () => clearTimeout(timeoutId);
-  }, [scriptLoaded, isOpen, initialPosition, selectedPosition]); 
-
+  }, [scriptLoaded, isOpen, initialPosition, selectedPosition]);
 
   const handleConfirm = () => {
     if (selectedPosition) {
@@ -176,8 +170,8 @@ export default function GoogleMapPicker({
         }
         getAddressFromLatLng(lat, lng);
       },
-      (error) => {
-        console.error('Error getting current location:', error);
+      () => {
+
         alert('تعذر الحصول على موقعك الحالي');
       }
     );
@@ -208,7 +202,7 @@ export default function GoogleMapPicker({
               <div className="h-full flex items-center justify-center bg-gray-100">
                 <div className="text-center">
                   <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                 
+
                 </div>
               </div>
             ) : (
@@ -237,7 +231,7 @@ export default function GoogleMapPicker({
               <button
                 type="button"
                 onClick={getCurrentLocation}
-                className="px-4 py-2 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors text-sm flex items-center gap-2"
+                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors text-sm flex items-center gap-2"
               >
                 <span>📍</span>
                 موقعي الحالي

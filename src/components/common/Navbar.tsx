@@ -79,9 +79,9 @@ export default function Navbar() {
               <Image
                 src="/logo1.png"
                 alt="شعار الموقع - اضغط للذهاب إلى الرئيسية"
-                width={155}
-                height={72}
-                className="max-w-30 md:max-w-38.75 max-h-12.5 md:max-h-18 object-contain"
+                width={302}
+                height={124}
+                className="w-30 md:w-38.75 h-auto max-h-12.5 md:max-h-18 object-contain"
                 priority
               />
             </Link>

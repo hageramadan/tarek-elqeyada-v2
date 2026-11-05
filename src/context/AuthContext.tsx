@@ -28,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     const storedToken = localStorage.getItem('token');
-    
+
     if (storedUser && storedToken) {
       setUser(JSON.parse(storedUser));
       setToken(storedToken);
@@ -48,21 +48,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = async () => {
     try {
       const currentToken = localStorage.getItem('token');
-      
+
       if (currentToken) {
         await fetch('https://admin.tareqalqeyada.sa/api/user/logout', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${currentToken}`,
             'Content-Type': 'application/json',
-            
+
           },
         });
       }
-    } catch (error) {
-      console.error('Logout error:', error);
+    } catch {
+      // Continue with the existing fallback.
     } finally {
-     
+
       setUser(null);
       setToken(null);
       setIsAuthenticated(false);
@@ -72,11 +72,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-
   const getUserProfile = async () => {
     try {
       const currentToken = localStorage.getItem('token');
-      
+
       if (!currentToken) {
         throw new Error('No token found');
       }
@@ -90,9 +89,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       const data = await response.json();
-      
+
       if (data.result) {
-        
+
         setUser(data.data);
         localStorage.setItem('user', JSON.stringify(data.data));
         return data;
@@ -100,16 +99,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(data.message || 'فشل جلب بيانات المستخدم');
       }
     } catch (error) {
-      console.error('Get profile error:', error);
+
       throw error;
     }
   };
 
-  
   const updateProfile = async (data: { name: string; phone: string; country_code: string }) => {
     try {
       const currentToken = localStorage.getItem('token');
-      
+
       if (!currentToken) {
         throw new Error('No token found');
       }
@@ -129,7 +127,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       const result = await response.json();
-      
+
       if (result.result) {
         // تحديث بيانات المستخدم المحلية
         const updatedUser = { ...user, ...data };
@@ -141,7 +139,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(result.message || 'فشل تحديث البيانات');
       }
     } catch (error) {
-      console.error('Update profile error:', error);
+
       throw error;
     }
   };
@@ -161,11 +159,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       });
 
       const data = await response.json();
-      
+
       if (data.result) {
         const token = data.data?.user?.token;
         const userData = data.data?.user || { phone, country_code: countryCode };
-        
+
         if (token) {
           login(userData, token);
           // جلب البيانات الكاملة للمستخدم
@@ -178,7 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(data.message || 'فشل تسجيل الدخول');
       }
     } catch (error) {
-      console.error('Login error:', error);
+
       throw error;
     }
   };
@@ -189,19 +187,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     login(data.data.user, data.data.user.token);
     try {
       await getUserProfile();
-    } catch (error) {
-      console.error('Profile refresh after sign-in failed:', error);
+    } catch {
+      // Continue with the existing fallback.
     }
     return data;
   };
 
   return (
-    <AuthContext.Provider value={{ 
-      user, 
-      isAuthenticated, 
+    <AuthContext.Provider value={{
+      user,
+      isAuthenticated,
       token,
-      login, 
-      logout, 
+      login,
+      logout,
       register,
       loginWithPhone,
       getUserProfile,

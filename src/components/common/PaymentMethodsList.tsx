@@ -23,6 +23,7 @@ interface PaymentMethodsListProps {
   error?: string;
   rentalType?: "يومي" | "شهري";
   onMethodsLoaded?: (methods: PaymentMethod[]) => void;
+  onLoadingChange?: (isLoading: boolean) => void;
 }
 
 const CASH_PAYMENT_METHOD: PaymentMethod = {
@@ -43,9 +44,14 @@ export default function PaymentMethodsList({
   error,
   rentalType = "يومي",
   onMethodsLoaded,
+  onLoadingChange,
 }: PaymentMethodsListProps) {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    onLoadingChange?.(isLoading);
+  }, [isLoading, onLoadingChange]);
 
   const availableMethods = useMemo(() => {
     if (rentalType === "شهري") {
@@ -86,8 +92,8 @@ export default function PaymentMethodsList({
         }));
 
         setPaymentMethods(loadedMethods);
-      } catch (error) {
-        console.error("Error fetching payment methods:", error);
+      } catch {
+
         toast.error("حدث خطأ في تحميل طرق الدفع");
       } finally {
         setIsLoading(false);
@@ -144,6 +150,7 @@ export default function PaymentMethodsList({
                 height={400}
                 className="object-contain w-full h-full"
                 unoptimized
+                loading="eager"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.src = "/images/payment/visa.png";
@@ -154,7 +161,7 @@ export default function PaymentMethodsList({
 
             <div className="flex-1">
               <p className="font-bold lg:font-medium text-gray-800 text-[10px] lg:text-sm">{method.name}</p>
-             
+
             </div>
 
             <div
@@ -258,9 +265,7 @@ export default function PaymentMethodsList({
 //         if (onMethodsLoaded) {
 //           onMethodsLoaded(filteredMethods);
 //         }
-//       } catch (error) {
-//         console.error("Error fetching payment methods:", error);
-//         toast.error("حدث خطأ في تحميل طرق الدفع");
+//       } catch (error) {//         toast.error("حدث خطأ في تحميل طرق الدفع");
 //       } finally {
 //         setIsLoading(false);
 //       }

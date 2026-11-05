@@ -1,5 +1,4 @@
 "use client";
-import { ReactNode } from "react";
 import Image from "next/image";
 
 interface LoadingScreenProps {
@@ -19,9 +18,9 @@ export default function LoadingScreen({ isLoading }: LoadingScreenProps) {
         <Image
           src="/logo1.png"
           alt="شعار الشركة"
-          width={180}
-          height={80}
-          className="object-contain"
+          width={302}
+          height={124}
+          className="w-[180px] h-auto object-contain"
           priority
         />
       </div>

@@ -1,5 +1,4 @@
 "use client";
-import { useEffect } from "react";
 import { FaStar } from "react-icons/fa";
 import { CiDeliveryTruck } from "react-icons/ci";
 import { TbClockHour3 } from "react-icons/tb";
@@ -45,11 +44,6 @@ export default function Stats({
     },
   ],
 }: StatsProps) {
-  // إضافة علامة في DOM فور تحميل المكون
-  useEffect(() => {
-    console.log("✅ Stats component mounted!");
-  }, []);
-
   return (
     <section className="py-4 bg-white mx-2 lg:mx-auto" data-stats-loaded>
       <div className="container  px-1 lg:px-4">
@@ -70,7 +64,7 @@ export default function Stats({
               </div>
               <div className="flex items-center gap-1 lg:gap-2">
                 <p className="font-bold text-[6px] md:text-[12px] text-gray-600 mt-1">
-                  {city} - {district} 
+                  {city} - {district}
                 </p>
                 <span className="text-sm lg:text-lg text-gray-600">|</span>
                 <div className="flex items-center gap-0.5 lg:gap-1">

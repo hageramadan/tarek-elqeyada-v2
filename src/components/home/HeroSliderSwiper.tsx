@@ -1,6 +1,6 @@
 'use client';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination, EffectFade } from 'swiper/modules'; 
+import { Autoplay, Pagination, EffectFade } from 'swiper/modules';
 import Image from 'next/image';
 import DownloadApp from '@/src/components/common/DownloadApp';
 import 'swiper/css';
@@ -24,7 +24,7 @@ import 'swiper/css/effect-fade';
 //     image: '/images/cars/c1.webp',
 //     color: 'from-blue-600 to-blue-800',
 //   },
-  
+
 //    {
 //     id: 3,
 //     title: 'استأجر سيارتك المثالية',
@@ -72,12 +72,11 @@ const slides = [
 
 ];
 export default function HeroSliderSwiper() {
- 
 
   return (
     <section className="relative mt-12">
       <Swiper
-        modules={[Autoplay, Pagination, EffectFade]} 
+        modules={[Autoplay, Pagination, EffectFade]}
         effect="fade"
         spaceBetween={0}
         slidesPerView={1}
@@ -85,7 +84,7 @@ export default function HeroSliderSwiper() {
           clickable: true,
           dynamicBullets: true,
         }}
-       
+
         autoplay={{
           delay: 5000,
           disableOnInteraction: false,
@@ -93,12 +92,12 @@ export default function HeroSliderSwiper() {
         loop={true}
        className="h-[35vh] md:h-[55vh] lg:h-[60vh]"
         dir="rtl"
-        
-        touchRatio={1.5}          
-        resistance={true}          
-        resistanceRatio={0.85}     
-        grabCursor={true}          
-        speed={800}                
+
+        touchRatio={1.5}
+        resistance={true}
+        resistanceRatio={0.85}
+        grabCursor={true}
+        speed={800}
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
@@ -119,7 +118,7 @@ export default function HeroSliderSwiper() {
                   <p className="text-base md:text-2xl lg:text-3xl lg:mb-8 text-[#D2D6DB]">
                     {slide.subtitle}
                   </p>
-                  {/* <Button 
+                  {/* <Button
                     onClick={handleRent}
                     className="bg-white text-primary hover:bg-gray-100 hover:scale-105 text-lg px-8 py-6 rounded-full shadow-xl transition-all duration-300"
                   >
@@ -152,7 +151,6 @@ export default function HeroSliderSwiper() {
 // import 'swiper/css/pagination';
 // import 'swiper/css/effect-fade';
 
-
 // const DEFAULT_IMAGE = '/images/hero.png';
 
 // export default function HeroSliderSwiper() {
@@ -164,7 +162,6 @@ export default function HeroSliderSwiper() {
 //       try {
 //         setIsLoading(true);
 //         const response = await CarService.getSliders();
-        
 
 //         const slidesData = response.addresses.map((item) => ({
 //           id: item.id,
@@ -190,9 +187,7 @@ export default function HeroSliderSwiper() {
 //         } else {
 //           setSlides(slidesData);
 //         }
-//       } catch (error) {
-//         console.error('Error fetching sliders:', error);
-//         // في حالة الخطأ، استخدم الصورة الافتراضية
+//       } catch (error) {//         // في حالة الخطأ، استخدم الصورة الافتراضية
 //         setSlides([
 //           {
 //             id: 1,

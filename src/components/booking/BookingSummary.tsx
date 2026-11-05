@@ -9,7 +9,7 @@ import { FaMoneyBills } from "react-icons/fa6";
 import { LiaMoneyBillWaveSolid } from "react-icons/lia";
 
 interface BookingSummaryProps {
-  car: Car;
+  car: Pick<Car, 'pricePerDay'>;
   rentalDays: number;
   totals: {
     subtotal: number;
@@ -59,7 +59,7 @@ export default function BookingSummary({
       </h2>
 
       <div className="flex justify-between items-center w-full pb-1">
-      
+
         <div className="flex items-center gap-1">
           <div className="p-1 rounded-full">
             <FaMoneyBills className="w-5 h-5 text-[#4b398e] " />
@@ -104,14 +104,12 @@ export default function BookingSummary({
 
               <span className="text-gray-600">رسوم الخدمات الاضافية</span>
             </div>
-          
+
             <p className="text-[#4b398e] text-sm font-bold">
               {formatCurrency(totals.servicesTotal)}
             </p>
           </div>
         )}
-
-       
 
         {/* {totals.tax > 0 && (
           <div className="flex justify-between text-sm pb-2 border-b border-gray-200">
@@ -122,7 +120,7 @@ export default function BookingSummary({
 
               <span className="text-gray-600">ضريبة القيمة المضافة</span>
             </div>
-      
+
             <span className="text-[#4b398e] text-sm font-bold">
               {formatCurrency(totals.tax)}
             </span>
@@ -136,7 +134,7 @@ export default function BookingSummary({
 
               <span className="text-gray-600">ضريبة القيمة المضافة</span>
             </div>
-      
+
             <span className="text-[#4b398e] text-sm font-bold">
               {formatCurrency(totals.tax)}
             </span>

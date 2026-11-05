@@ -26,7 +26,7 @@ export const usePhoneAuth = () => {
 
   const setupRecaptcha = () => {
   if (typeof window === 'undefined') return null;
-  
+
   // ✅ إذا كان موجوداً بالفعل، أعد استخدامه
   if (window.recaptchaVerifier) {
     return window.recaptchaVerifier;
@@ -41,9 +41,9 @@ export const usePhoneAuth = () => {
 
     const verifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
       size: 'invisible',
-      callback: () => console.log('reCAPTCHA solved'),
+      callback: () => undefined,
       'expired-callback': () => {
-        console.log('reCAPTCHA expired');
+
         // ✅ عند الانتهاء، نظّف
         if (window.recaptchaVerifier) {
           window.recaptchaVerifier.clear();
@@ -54,8 +54,8 @@ export const usePhoneAuth = () => {
 
     window.recaptchaVerifier = verifier;
     return verifier;
-  } catch (error) {
-    console.error('reCAPTCHA setup error:', error);
+  } catch {
+
     return null;
   }
 };
@@ -124,7 +124,6 @@ const sendOTP = async (
     setIsOTPSent(true);
     return { success: true };
   } catch (error: any) {
-    console.error("❌ Send OTP error:", error);
 
     const errorCode = error.code || error.message || "unknown";
 

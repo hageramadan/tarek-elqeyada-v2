@@ -15,11 +15,11 @@ interface PaymentPopupProps {
   selectedMethod: string | null;
 }
 
-export default function PaymentPopup({ 
-  isOpen, 
-  onClose, 
-  onSelect, 
-  selectedMethod 
+export default function PaymentPopup({
+  isOpen,
+  onClose,
+  onSelect,
+  selectedMethod
 }: PaymentPopupProps) {
   const [tempSelected, setTempSelected] = useState<string | null>(selectedMethod);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,8 +39,8 @@ export default function PaymentPopup({
         }));
 
         setPaymentMethods(formattedMethods);
-      } catch (error) {
-        console.error('Error fetching payment methods:', error);
+      } catch {
+
         toast.error('حدث خطأ في تحميل طرق الدفع');
       } finally {
         setIsLoading(false);
@@ -93,7 +93,7 @@ export default function PaymentPopup({
   return (
     <div className="fixed inset-0 z-9999 flex items-center justify-center backdrop-blur-xs p-4 ">
       <div className="bg-white rounded-2xl mt-20 shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden animate-in fade-in zoom-in duration-300">
-        
+
         <div className="flex items-center justify-between p-4 border-b">
           <h2 className="text-lg font-bold text-gray-800">طريقة الدفع</h2>
           <button
@@ -105,7 +105,6 @@ export default function PaymentPopup({
           </button>
         </div>
 
-      
         <div className="p-4 space-y-3 overflow-y-auto max-h-96">
           {isLoading ? (
             // حالة التحميل
@@ -183,7 +182,6 @@ export default function PaymentPopup({
           )}
         </div>
 
-      
         <div className="flex gap-3 p-4 border-t">
           <button
             type="button"

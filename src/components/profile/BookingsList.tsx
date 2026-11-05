@@ -189,9 +189,9 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
       } else {
         setError(response.message || "حدث خطأ في جلب الحجوزات");
       }
-    } catch (err) {
+    } catch {
       setError("حدث خطأ في الاتصال بالخادم");
-      console.error("Error fetching bookings:", err);
+
     } finally {
       setLoading(false);
     }
@@ -373,13 +373,13 @@ export default function BookingsList({ initialBookingId = null }: BookingsListPr
                         {/* <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusColor(booking.status)}`}>
                           {getStatusLabel(booking.status)}
                         </span> */}
-                        
+
                         {/* حالة الدفع - مع أيقونة */}
                         <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${getPaymentStatusColor(booking.payment_status)}`}>
                           {getPaymentStatusIcon(booking.payment_status)}
                           {getPaymentStatusLabel(booking.payment_status)}
                         </span>
-                        
+
                         {/* طريقة الدفع */}
                         {/* {booking.payment_method && (
                           <span className="text-xs px-2 py-0.5 bg-blue-50 rounded-full text-blue-700 truncate max-w-[120px] border border-blue-200">

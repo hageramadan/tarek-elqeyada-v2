@@ -7,7 +7,7 @@ import { CarService } from './carService';
 import { CheckoutRequest } from '../types/api';
 
 export class BookingService {
-  
+
   static async getCarById(id: string): Promise<Car> {
     return Promise.resolve({ ...mockCar, id });
   }
@@ -27,14 +27,14 @@ export class BookingService {
     carData: any,
     rentalType: 'daily' | 'weekly' | 'monthly',
     token: string
-  ): Promise<{ 
-    success: boolean; 
-    message: string; 
-    bookingId?: string; 
+  ): Promise<{
+    success: boolean;
+    message: string;
+    bookingId?: string;
     paymentUrl?: string;
     uuid?: string;
     zip?: string;
-     error?: any; 
+     error?: any;
   }> {
     try {
       const paymentMethodId = parseInt(data.selectedPaymentMethod) || 0;
@@ -45,7 +45,7 @@ export class BookingService {
       const finalIndex = index !== -1 ? index : 1;
 
       let insuranceTypeId = 4;
-      
+
       if (carData?.insuranceTypeId) {
         insuranceTypeId = carData.insuranceTypeId;
       } else if (carData?.office?.insurance_types?.length > 0) {
@@ -104,7 +104,7 @@ export class BookingService {
         zip: data.zip,
       };
     } catch (error: any) {
-      console.error('Error submitting booking:', error);
+
       return {
         success: false,
         message: error.message || 'حدث خطأ أثناء الحجز',
@@ -145,7 +145,6 @@ export class BookingService {
     token: string
   ): Promise<{ success: boolean; message: string; paymentUrl?: string; paymentData?: any }> {
     try {
-      console.log('📤 processPayment called with:', bookingData);
 
       // بناء المعاملات مع callback_url
       const checkoutParams: CheckoutRequest = {
@@ -161,15 +160,11 @@ export class BookingService {
         return_url: bookingData.return_url,     // إرسال return_url
       };
 
-      console.log('📤 Processing payment:', checkoutParams);
-
       const response = await CarService.checkout(checkoutParams, token);
-      
-      console.log('📥 Checkout response in processPayment:', response);
 
       // تحقق من وجود رابط الدفع
       if (!response.payment_url) {
-        console.error('❌ No payment URL in response:', response);
+
         return {
           success: false,
           message: 'لم يتم استلام رابط الدفع من الخادم',
@@ -183,7 +178,7 @@ export class BookingService {
         paymentData: response.payment_data,
       };
     } catch (error: any) {
-      console.error('❌ Error in processPayment:', error);
+
       return {
         success: false,
         message: error.message || 'حدث خطأ أثناء عملية الدفع',

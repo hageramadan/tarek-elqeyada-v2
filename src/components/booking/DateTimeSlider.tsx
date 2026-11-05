@@ -1,7 +1,7 @@
 // src/components/booking/DateTimeSlider.tsx
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { Fragment, useRef, useEffect, useState } from "react";
 import { format } from "date-fns";
 import { ar } from "date-fns/locale";
 import { cn } from "@/src/lib/utils";
@@ -371,9 +371,11 @@ export default function DateTimeSlider({
 
           {/* العناصر */}
           <div className="relative z-10 w-full">
-            {visibleDates.map((item) =>
-              renderDateItem(item.item, item.index, item.position),
-            )}
+            {visibleDates.map((item, slotIndex) => (
+              <Fragment key={`date-slot-${slotIndex}`}>
+                {renderDateItem(item.item, item.index, item.position)}
+              </Fragment>
+            ))}
           </div>
         </div>
 
@@ -398,9 +400,11 @@ export default function DateTimeSlider({
 
   {/* العناصر */}
   <div className="relative z-10 w-full">
-    {visibleTimes.map((item) =>
-      renderTimeItem(item.item, item.index, item.position)
-    )}
+    {visibleTimes.map((item, slotIndex) => (
+      <Fragment key={`time-slot-${slotIndex}`}>
+        {renderTimeItem(item.item, item.index, item.position)}
+      </Fragment>
+    ))}
   </div>
 </div>
       </div>

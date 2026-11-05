@@ -25,6 +25,10 @@ import {
 import { CreateBookingRequest, CreateBookingResponse } from "../types/booking";
 import type { CarCatalogCategory, CarCatalogResponse } from "../types/carCatalog";
 
+// Apple Pay معلّق مؤقتًا؛ غيّري القيمة إلى true لإظهاره مرة أخرى.
+const APPLE_PAY_ENABLED = false;
+const APPLE_PAY_METHOD_ID = 1;
+
 // ============================================
 // CAR SERVICE - API Implementation
 // ============================================
@@ -62,7 +66,7 @@ export class CarService extends ApiService {
   // sau_pk_live_8Dza5gChMSVJbnsKtWKJOTs8jlQz6ZEW
   // "sau_pk_live_8Dza5gChMSVJbnsKtWKJOTs8jlQz6ZEW"
   private static readonly PUBLIC_KEY_LIVE = "sau_pk_live_8Dza5gChMSVJbnsKtWKJOTs8jlQz6ZEW"; // استبدليها بالمفتاح الصحيح
-  // 
+  //
   // ============================================
   // 📦 Base URLs - Production & Test
   // ============================================
@@ -94,7 +98,7 @@ export class CarService extends ApiService {
 
       return response.data;
     } catch (error) {
-      console.error("Error fetching daily cars raw:", error);
+
       throw error;
     }
   }
@@ -117,7 +121,7 @@ export class CarService extends ApiService {
       const cars = await this.getDailyCars();
       return cars.find((car) => car.id === id) || null;
     } catch (error) {
-      console.error("Error fetching car by id:", error);
+
       throw error;
     }
   }
@@ -144,7 +148,7 @@ export class CarService extends ApiService {
         imageUrl: service.image_url,
       }));
     } catch (error) {
-      console.error("Error fetching provider services:", error);
+
       throw error;
     }
   }
@@ -169,7 +173,7 @@ export class CarService extends ApiService {
         deductibleText: insurance.deductible_text,
       }));
     } catch (error) {
-      console.error("Error fetching provider insurance:", error);
+
       throw error;
     }
   }
@@ -279,7 +283,7 @@ export class CarService extends ApiService {
 
       return response.data;
     } catch (error) {
-      console.error("Error fetching monthly cars:", error);
+
       throw error;
     }
   }
@@ -288,7 +292,7 @@ export class CarService extends ApiService {
     officeId: number,
     carId: number,
   ): Promise<CarDetailsResponse> {
-    console.log(`📡 Fetching: /daily-cars/${officeId}/${carId}`);
+
     try {
       const response = await this.get<ApiResponse<CarDetailsResponse>>(
         `/daily-cars/${officeId}/${carId}`,
@@ -300,7 +304,7 @@ export class CarService extends ApiService {
 
       return response.data;
     } catch (error) {
-      console.error("❌ Error fetching daily car details:", error);
+
       throw error;
     }
   }
@@ -309,13 +313,11 @@ export class CarService extends ApiService {
     officeId: number,
     carId: number,
   ): Promise<CarDetailsResponse> {
-    console.log(`📡 Fetching: /monthly-companies/${officeId}/${carId}`);
+
     try {
       const response = await this.get<ApiResponse<CarDetailsResponse>>(
         `/monthly-companies/${officeId}/${carId}`,
       );
-
-      console.log("Response:", response);
 
       if (!response.result) {
         throw new Error(
@@ -325,7 +327,7 @@ export class CarService extends ApiService {
 
       return response.data;
     } catch (error) {
-      console.error("❌ Error fetching monthly car details:", error);
+
       throw error;
     }
   }
@@ -348,7 +350,7 @@ export class CarService extends ApiService {
 
       return response.data;
     } catch (error) {
-      console.error("Error fetching available periods:", error);
+
       throw error;
     }
   }
@@ -363,10 +365,11 @@ export class CarService extends ApiService {
       }
 
       return response.data.services.filter(
-        (method) => method.status === "active",
+          (method) => method.status === "active" &&
+            (APPLE_PAY_ENABLED || method.id !== APPLE_PAY_METHOD_ID),
       );
     } catch (error) {
-      console.error("Error fetching payment methods:", error);
+
       throw error;
     }
   }
@@ -399,7 +402,7 @@ export class CarService extends ApiService {
 
       return response.data;
     } catch (error) {
-      console.error("Error calculating price:", error);
+
       throw error;
     }
   }
@@ -415,7 +418,7 @@ export class CarService extends ApiService {
 
       return response.data;
     } catch (error) {
-      console.error("Error fetching sliders:", error);
+
       throw error;
     }
   }
@@ -466,7 +469,7 @@ export class CarService extends ApiService {
 
       return response.data;
     } catch (error) {
-      console.error("Error creating booking:", error);
+
       throw error;
     }
   }
@@ -493,8 +496,6 @@ export class CarService extends ApiService {
         return_url: params.return_url,
       };
 
-      console.log("📤 Checkout Request:", requestBody);
-
       const response = await this.post<ApiResponse<any>>(
         "/pay/checkout",
         requestBody,
@@ -502,11 +503,6 @@ export class CarService extends ApiService {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-      );
-
-      console.log(
-        "📥 Full Checkout Response:",
-        JSON.stringify(response, null, 2),
       );
 
       if (!response.result) {
@@ -525,7 +521,7 @@ export class CarService extends ApiService {
       // 2️⃣ تحديد البيئة (Test / Live) ديناميكياً
       // ============================================
       let isLive = false;
-      
+
       // 2.1 من payment_methods
       if (paymentData?.payment_methods && Array.isArray(paymentData.payment_methods)) {
         const firstMethod = paymentData.payment_methods[0];
@@ -533,7 +529,7 @@ export class CarService extends ApiService {
           isLive = firstMethod.live;
         }
       }
-      
+
       // 2.2 من client_secret
       if (clientSecret && typeof clientSecret === 'string') {
         if (clientSecret.includes('_test_')) {
@@ -543,20 +539,16 @@ export class CarService extends ApiService {
         }
       }
 
-      console.log(`🌍 Environment: ${isLive ? '🔴 LIVE (Production)' : '🟢 TEST'}`);
-
       // ============================================
       // 3️⃣ اختيار الـ Public Key المناسب
       // ============================================
       let publicKey = paymentData?.public_key;
-      
+
       if (!publicKey) {
-        publicKey = isLive 
-          ? this.PUBLIC_KEY_LIVE 
+        publicKey = isLive
+          ? this.PUBLIC_KEY_LIVE
           : this.PUBLIC_KEY_TEST;
       }
-
-      console.log(`🔑 Public Key: ${publicKey}`);
 
       // ============================================
       // 4️⃣ بناء رابط Paymob
@@ -567,51 +559,46 @@ export class CarService extends ApiService {
         url.searchParams.append('publicKey', publicKey);
         url.searchParams.append('clientSecret', clientSecret);
         paymentUrl = url.toString();
-        
+
         // ============================================
         // 5️⃣ طباعة الرابط في الكونسول
         // ============================================
-        console.log("=" .repeat(80));
-        console.log(`🔗 PAYMENT URL (${isLive ? 'LIVE' : 'TEST'}):`);
-        console.log(paymentUrl);
-        console.log("=" .repeat(80));
-        
+
         // ============================================
         // 6️⃣ فتح الرابط في المتصفح
         // ============================================
-        console.log("🚀 Opening payment URL...");
-        
+
         if (typeof window !== 'undefined' && window.location) {
           window.location.href = paymentUrl;
-          console.log("✅ Redirected to payment page");
+
         } else {
-          console.warn("⚠️ window.location not available, returning URL for manual handling");
+
         }
       }
 
       // ============================================
       // 7️⃣ التحقق من الروابط البديلة
       // ============================================
-      
+
       // 7.1 Tabby (installments)
       if (!paymentUrl && paymentData?.configuration?.available_products?.installments) {
         const installments = paymentData.configuration.available_products.installments;
         if (installments.length > 0 && installments[0]?.web_url) {
           paymentUrl = installments[0].web_url;
-          console.log("🔗 Tabby Payment URL (from installments):", paymentUrl);
+
         }
       }
 
       // 7.2 Tabby web_url
       if (!paymentUrl && paymentData?.web_url) {
         paymentUrl = paymentData.web_url;
-        console.log("🔗 Tabby web_url:", paymentUrl);
+
       }
 
       // 7.3 Tamara checkout_url
       if (!paymentUrl && paymentData?.checkout_url) {
         paymentUrl = paymentData.checkout_url;
-        console.log("🔗 Tamara checkout_url:", paymentUrl);
+
       }
 
       // 7.4 MIGS redirection_url
@@ -619,26 +606,24 @@ export class CarService extends ApiService {
         const firstKey = paymentData.payment_keys[0];
         if (firstKey?.redirection_url) {
           paymentUrl = firstKey.redirection_url;
-          console.log("🔗 Redirection URL (from payment_keys):", paymentUrl);
+
         }
       }
 
       // 7.5 redirect_url
       if (!paymentUrl && paymentData?.redirect_url) {
         paymentUrl = paymentData.redirect_url;
-        console.log("🔗 redirect_url:", paymentUrl);
+
       }
 
       // 7.6 payment_url
       if (!paymentUrl && response.data?.payment_url) {
         paymentUrl = response.data.payment_url;
-        console.log("🔗 payment_url:", paymentUrl);
+
       }
 
-      console.log("🔗 Final Payment URL:", paymentUrl);
-
       if (!paymentUrl) {
-        console.error("❌ No payment URL found in response");
+
         throw new Error("لم يتم العثور على رابط الدفع");
       }
 
@@ -647,7 +632,7 @@ export class CarService extends ApiService {
         payment_data: paymentData,
       };
     } catch (error) {
-      console.error("Error during checkout:", error);
+
       throw error;
     }
   }

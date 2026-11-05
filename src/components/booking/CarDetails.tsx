@@ -56,7 +56,7 @@ export default function CarDetails({
                 className="object-contain object-center p-1"
                 priority
                 onError={(e) => {
-                  console.error("❌ Image failed to load:", imageSrc);
+
                   (e.target as HTMLImageElement).style.display = "none";
                 }}
               />
@@ -95,7 +95,7 @@ export default function CarDetails({
               </div>
             </div>
           </div>
-          
+
           {/* <p className="text-sm text-[#717182]">أقل مدة للتأجير مع خدمة التوصيل (2 أيام)</p> */}
         </div>
 

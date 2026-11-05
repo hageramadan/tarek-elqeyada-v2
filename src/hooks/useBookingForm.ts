@@ -1,7 +1,7 @@
 // src/hooks/useBookingForm.ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState, useCallback, useMemo, useEffect } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 import { BookingData, AdditionalService } from "@/src/types/booking";
@@ -219,9 +219,20 @@ export const useBookingForm = (
     null,
   );
   const [isCalculating, setIsCalculating] = useState(false);
+  const [isLoadingServices, setIsLoadingServices] = useState(initialServices.length === 0);
 
   // تخزين الـ period_id المختار (للحجز الشهري)
   const [selectedPeriodId, setSelectedPeriodId] = useState<number | null>(null);
+
+  const priceRequestKey = JSON.stringify([
+    carId, rentalCompanyId, bookingType, priceBookingType,
+    bookingData.rentalDate, bookingData.rentalTime, bookingData.rentalDays,
+    bookingData.selectedServices, selectedPeriodId,
+  ]);
+  const [settledPriceKey, setSettledPriceKey] = useState<string | null>(null);
+  const latestPriceKey = useRef(priceRequestKey);
+  latestPriceKey.current = priceRequestKey;
+  const priceRequestSequence = useRef(0);
 
   // ✅ الفترات الشهرية المتاحة + الأشهر
   // ⚠️ بنستقبلها من BookingForm مباشرة (مفيش fetch مكرر)
@@ -300,9 +311,18 @@ export const useBookingForm = (
 
   // Load Services
   useEffect(() => {
-    if (initialServices.length === 0) {
-      BookingService.getServices().then(setAvailableServices);
+    if (initialServices.length > 0) {
+      setIsLoadingServices(false);
+      return;
     }
+
+    let cancelled = false;
+    setIsLoadingServices(true);
+    BookingService.getServices()
+      .then((data) => { if (!cancelled) setAvailableServices(data); })
+      .catch(() => undefined)
+      .finally(() => { if (!cancelled) setIsLoadingServices(false); });
+    return () => { cancelled = true; };
   }, [initialServices]);
 
   // Ensure at least one service is selected
@@ -325,14 +345,19 @@ export const useBookingForm = (
       !bookingData.rentalTime ||
       !bookingData.rentalDays
     ) {
+      setSettledPriceKey(priceRequestKey);
       return;
     }
 
     if (!rentalCompanyId) {
-      console.warn("No rental company ID provided");
+
+      setSettledPriceKey(priceRequestKey);
       return;
     }
 
+    const requestSequence = ++priceRequestSequence.current;
+    const isCurrentRequest = () => latestPriceKey.current === priceRequestKey &&
+      priceRequestSequence.current === requestSequence;
     setIsCalculating(true);
     try {
       const time = bookingData.rentalTime;
@@ -359,16 +384,17 @@ export const useBookingForm = (
         params.period_id = selectedPeriodId;
       }
 
-      console.log("📤 Calculate Price Params:", params);
-
       const response = await CarService.calculatePrice(params);
-      setPriceData(response);
+      if (isCurrentRequest()) setPriceData(response);
 
       return response;
-    } catch (error) {
-      console.error("Error calculating price:", error);
+    } catch {
+      // Continue with the existing fallback.
     } finally {
-      setIsCalculating(false);
+      if (isCurrentRequest()) {
+        setSettledPriceKey(priceRequestKey);
+        setIsCalculating(false);
+      }
     }
   }, [
     bookingData.rentalDate,
@@ -380,6 +406,7 @@ export const useBookingForm = (
     priceBookingType,
     bookingData.selectedServices,
     selectedPeriodId,
+    priceRequestKey,
   ]);
 
   // Recalculate when date, time, days, or services change
@@ -571,9 +598,9 @@ export const useBookingForm = (
         ) {
           insuranceTypeId = carDetails.office.insurance_types[0].id;
         }
-      } catch (error) {
-        console.warn("⚠️ Could not fetch car details for insurance:", error);
-      }
+      } catch {
+      // Continue with the existing fallback.
+    }
 
       const bookingDataWithExtra = {
         ...bookingData,
@@ -637,8 +664,6 @@ export const useBookingForm = (
         },
         token,
       );
-
-      console.log("Payment Result:", paymentResult);
 
       if (paymentResult.success) {
         resetForm();
@@ -712,7 +737,7 @@ export const useBookingForm = (
         return null;
       }
     } catch (error: any) {
-      console.error("❌ Submit error:", error);
+
       const errorMessage = extractErrorMessage(error);
       toast.error(`❌ ${errorMessage}`);
       setIsRedirecting(false);
@@ -744,6 +769,8 @@ export const useBookingForm = (
     totals,
     availableServices,
     isCalculating,
+    isPriceReady: settledPriceKey === priceRequestKey,
+    isLoadingServices,
     priceData,
     updateField,
     toggleService,

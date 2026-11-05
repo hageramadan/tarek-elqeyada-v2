@@ -99,8 +99,8 @@ export default function BookingDetails({
       const data = await checkExtension(bookingId);
       setCanExtend(data.can_extend);
       setExtensionData(data);
-    } catch (error) {
-      console.error("Error checking extension:", error);
+    } catch {
+
       setCanExtend(false);
     } finally {
       setIsCheckingExtension(false);
@@ -119,9 +119,9 @@ export default function BookingDetails({
         } else {
           setError(response.message || "حدث خطأ في جلب تفاصيل الحجز");
         }
-      } catch (err) {
+      } catch {
         setError("حدث خطأ في الاتصال بالخادم");
-        console.error("Error fetching booking details:", err);
+
       } finally {
         setLoading(false);
       }
@@ -216,7 +216,6 @@ export default function BookingDetails({
         toast.error(result.message);
       }
     } catch (error: any) {
-      console.error("Error processing payment:", error);
 
       if (booking && selectedPaymentMethod) {
         await UpdatePaymentStatusService.updatePaymentFailed(
@@ -478,7 +477,7 @@ export default function BookingDetails({
 
                    <span className="text-gray-600">السعر الأساسي</span>
                 </div>
-            
+
               <div className="flex items-center gap-1">
                 <span className="font-bold text-[#4b398e] text-sm">
                   {booking.price_breakdown.base_price}
@@ -573,8 +572,7 @@ export default function BookingDetails({
                     {booking.delivery_address}
                   </p>
                 )}
-              
-              
+
               </div>
             </div>
           </div>
@@ -603,7 +601,7 @@ export default function BookingDetails({
       <span className="text-gray-600">رقم الجوال</span>
       <span className="font-bold text-[#4b398e]">{booking.user.phone}</span>
     </div>
-    
+
   </div>
 </div>
         <div
@@ -644,7 +642,6 @@ export default function BookingDetails({
           )}
         </div>
 
-     
         {!isCheckingExtension && isPaymentPaid && canExtend && (
           <div
             className={cn(
@@ -685,8 +682,7 @@ export default function BookingDetails({
             )}
           </div>
         )}
-  
-       
+
         {!isCheckingExtension &&
           isPaymentPaid &&
           !canExtend &&

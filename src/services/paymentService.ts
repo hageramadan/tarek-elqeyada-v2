@@ -99,11 +99,7 @@ export class PaymentService {
         index,
       };
 
-      console.log(`📤 Processing payment with method: ${PaymentMethodNames[payment_method]}`);
-      console.log(`📤 Index: ${index}, Payment Method ID: ${payment_method}`);
-
       const response = await CarService.checkout(checkoutData, token);
-      console.log(`📥 Payment response:`, response);
 
       let paymentUrl = this.buildPaymentUrl(payment_method, response);
 
@@ -135,7 +131,7 @@ export class PaymentService {
         isCash: false,
       };
     } catch (error: any) {
-      console.error("❌ Error processing payment:", error);
+
       return {
         success: false,
         message: error.message || "حدث خطأ أثناء عملية الدفع",
@@ -166,12 +162,12 @@ export class PaymentService {
   }
 
   private static buildPaymobUrl(paymentData: any): string | null {
-    const clientSecret = paymentData?.client_secret || 
-                        paymentData?.clientSecret || 
+    const clientSecret = paymentData?.client_secret ||
+                        paymentData?.clientSecret ||
                         paymentData?.payment?.client_secret;
 
     if (!clientSecret) {
-      console.warn(' No client_secret found in response');
+
       return null;
     }
 
@@ -184,7 +180,7 @@ export class PaymentService {
     }
 
     const paymentUrl = `${baseUrl}/?publicKey=${publicKey}&clientSecret=${clientSecret}`;
-    console.log(`🔗 Paymob URL: ${paymentUrl}`);
+
     return paymentUrl;
   }
 
@@ -236,7 +232,7 @@ export class PaymentService {
     if (paymentData?.raw?.url) {
       return paymentData.raw.url;
     }
-    console.warn(' No Mispay URL found in response');
+
     return null;
   }
 
@@ -269,7 +265,7 @@ export class PaymentService {
   }
 
   static isPaymentMethodInstallment(methodId: number): boolean {
-    return methodId === PaymentMethodType.TABBY || 
+    return methodId === PaymentMethodType.TABBY ||
            methodId === PaymentMethodType.TAMARA;
   }
 

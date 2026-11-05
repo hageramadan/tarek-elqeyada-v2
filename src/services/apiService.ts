@@ -15,18 +15,12 @@ export class ApiService {
       ...options.headers,
     };
 
-    console.log(`📡 ${options.method || "GET"} Request:`, {
-      url,
-      headers,
-      body: options.body,
-    });
-
     try {
       const response = await fetch(url, { ...options, headers });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("❌ Error response:", errorText);
+
         throw new Error(`API Error: ${response.status} - ${errorText}`);
       }
 
@@ -34,7 +28,7 @@ export class ApiService {
 
       return data;
     } catch (error) {
-      console.error("API Error:", error);
+
       throw error;
     }
   }
@@ -82,5 +76,5 @@ export class ApiService {
       headers: customHeaders,
     });
   }
-  
+
 }

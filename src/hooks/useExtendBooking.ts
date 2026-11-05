@@ -98,14 +98,14 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
 
       return true;
     } catch (error: any) {
-      console.error("❌ Error extending booking:", error);
+
       const errorMsg = extractErrorMessage(error);
-      
+
       // ❌ تحديث حالة الدفع إلى failed
       await UpdatePaymentStatusService.updatePaymentFailed(
         uuid,
         paymentMethodId,
-        { 
+        {
           error: errorMsg,
           extension_days: days,
           booking_id: bookingId,
@@ -180,8 +180,6 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
         token,
       );
 
-      console.log("📤 Payment Result:", paymentResult);
-
       if (paymentResult.success) {
         if (paymentResult.isCash) {
           // 🔹 حالة الدفع النقدي: يتم التمديد مباشرة
@@ -196,7 +194,7 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
             await UpdatePaymentStatusService.updatePaymentSuccess(
               uuid,
               paymentMethodId,
-              { 
+              {
                 payment_type: "cash",
                 extension_days: days,
                 booking_id: bookingId,
@@ -208,7 +206,7 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
           setIsRedirecting(false);
           setIsSubmitting(false);
           return;
-        } 
+        }
         else if (paymentResult.paymentUrl) {
           // 🔹 حالة الدفع الإلكتروني: التوجيه إلى بوابة الدفع
           toast.success("🔄 جاري توجيهك إلى بوابة الدفع...", {
@@ -220,19 +218,19 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
 
           if (!paymentUrl || !paymentUrl.startsWith("http")) {
             toast.error("❌ رابط الدفع غير صالح");
-            
+
             // ❌ تحديث حالة الدفع إلى failed
             await UpdatePaymentStatusService.updatePaymentFailed(
               uuid,
               paymentMethodId,
-              { 
+              {
                 error: "Invalid payment URL",
                 extension_days: days,
                 booking_id: bookingId,
               },
               token,
             );
-            
+
             setIsRedirecting(false);
             setIsSubmitting(false);
             return;
@@ -257,13 +255,13 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
           setIsRedirecting(false);
           setIsSubmitting(false);
           return;
-        } 
+        }
         else {
           // ❌ لا يوجد رابط دفع
           await UpdatePaymentStatusService.updatePaymentFailed(
             uuid,
             paymentMethodId,
-            { 
+            {
               error: "No payment URL received",
               extension_days: days,
               booking_id: bookingId,
@@ -281,7 +279,7 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
         await UpdatePaymentStatusService.updatePaymentFailed(
           uuid,
           paymentMethodId,
-          { 
+          {
             error: errorMsg,
             extension_days: days,
             booking_id: bookingId,
@@ -294,7 +292,7 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
         return;
       }
     } catch (error: any) {
-      console.error("❌ Extend booking error:", error);
+
       const errorMsg = extractErrorMessage(error);
       toast.error(`❌ ${errorMsg}`);
       setIsRedirecting(false);
@@ -307,16 +305,16 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
     // محاولة استرجاع بيانات التمديد من localStorage
     const pendingDataStr = localStorage.getItem('pending_extension');
     if (!pendingDataStr) {
-      console.warn("⚠️ No pending extension data found");
+
       return false;
     }
 
     try {
       const pendingData = JSON.parse(pendingDataStr);
-      
+
       // التحقق من صحة البيانات
       if (pendingData.uuid !== uuid) {
-        console.warn("⚠️ UUID mismatch");
+
         return false;
       }
 
@@ -336,10 +334,10 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
           paymentMethodId,
           uuid,
         );
-        
+
         if (success) {
           localStorage.removeItem('pending_extension');
-          
+
           // ✅ تحديث حالة الدفع إلى success
           await UpdatePaymentStatusService.updatePaymentSuccess(
             uuid,
@@ -352,7 +350,7 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
             },
             token || undefined,
           );
-          
+
           return true;
         }
         return false;
@@ -372,8 +370,8 @@ export const useExtendBooking = ({ bookingId, carName, onSuccess }: UseExtendBoo
         toast.error("❌ لم يتم الدفع، يرجى المحاولة مرة أخرى");
         return false;
       }
-    } catch (error) {
-      console.error("❌ Error processing payment callback:", error);
+    } catch {
+
       localStorage.removeItem('pending_extension');
       return false;
     }

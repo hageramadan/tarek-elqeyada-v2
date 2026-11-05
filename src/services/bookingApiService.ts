@@ -238,8 +238,7 @@ async function request<T>(
   options: RequestInit = {}
 ): Promise<T> {
   const token = getToken();
-  
- 
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
@@ -268,7 +267,7 @@ async function request<T>(
 
 // دالة لجلب قائمة الحجوزات مع فلتر ورقم الصفحة
 export async function getBookings(
-  filter?: string, 
+  filter?: string,
   page: number = 1,
   perPage: number = 10
 ): Promise<BookingsResponse> {
@@ -278,7 +277,7 @@ export async function getBookings(
   }
   queryParams.append('page', page.toString());
   queryParams.append('per_page', perPage.toString());
-  
+
   const endpoint = `/bookings${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
   return request<BookingsResponse>(endpoint);
 }

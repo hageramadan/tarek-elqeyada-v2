@@ -52,21 +52,21 @@ export default function ChangePassword({ onClose }: ChangePasswordProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsLoading(true);
-    
+
     // محاكاة طلب API
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      console.log('تم تغيير كلمة المرور بنجاح');
+
       // هنا يمكنك إضافة منطق حفظ كلمة المرور
       onClose(); // إغلاق المودال بعد النجاح
-    } catch (error) {
-      console.error('حدث خطأ أثناء تغيير كلمة المرور');
+    } catch {
+      // Continue with the existing fallback.
     } finally {
       setIsLoading(false);
     }

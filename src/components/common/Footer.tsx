@@ -40,8 +40,8 @@ export default function Footer() {
         if (data.result && data.data) {
           setSettings(data.data);
         }
-      } catch (error) {
-        console.error("Error fetching settings:", error);
+      } catch {
+
         // استخدام بيانات افتراضية في حالة الفشل
         setSettings({
           phone: "0566666364",
@@ -106,9 +106,9 @@ export default function Footer() {
             <Image
               src={"/logo1.png"}
               alt={settings?.name || "CarRent Logo"}
-              width={250}
-              height={50}
-              className="w-36 lg:w-52"
+              width={302}
+              height={124}
+              className="w-36 lg:w-52 h-auto"
               unoptimized
             />
           </div>

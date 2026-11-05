@@ -15,30 +15,30 @@ export default function BookingServices({
   selectedServices,
   onToggle,
 }: BookingServicesProps) {
-  if (services.length === 0) return null;
-
   useEffect(() => {
     if (services.length > 0) {
       const firstServiceId = services[0].id;
-      
+
       if (!selectedServices.includes(firstServiceId)) {
         onToggle(firstServiceId);
       }
     }
   }, [services, selectedServices, onToggle]);
 
+  if (services.length === 0) return null;
+
   const handleToggle = (id: string) => {
-    
+
     if (id === services[0]?.id) {
-     
+
       if (selectedServices.includes(id)) {
-        return; 
+        return;
       }
-      
+
       onToggle(id);
       return;
     }
-   
+
     onToggle(id);
   };
 
@@ -64,13 +64,12 @@ export default function BookingServices({
                   : 'border-gray-200 hover:border-primary/30'
               } ${isFirst ? 'cursor-default' : 'cursor-pointer'}`}
             >
-              
+
                 <p className="text-sm lg:text-base text-[#4F5352]">
                   {service.name}
-                  
+
                 </p>
-               
-           
+
               <div className="flex items-center gap-4">
                  <p className="text-sm lg:text-base font-bold text-[#4b398e]">
                   {service.price} ريال
@@ -84,14 +83,13 @@ export default function BookingServices({
                 >
                   {isSelected && <FaCheck className="text-xs" />}
                 </div>
-              
+
               </div>
             </button>
           );
         })}
       </div>
 
-      
     </div>
   );
 }

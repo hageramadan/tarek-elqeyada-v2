@@ -2,7 +2,6 @@
 
 "use client";
 
-
 import PaymentMethodsList from "@/src/components/common/PaymentMethodsList";
 
 interface BookingPaymentProps {
@@ -10,6 +9,7 @@ interface BookingPaymentProps {
   onSelect: (id: string) => void;
   error?: string;
   rentalType?: "يومي" | "شهري";
+  onLoadingChange?: (isLoading: boolean) => void;
 }
 
 export default function BookingPayment({
@@ -17,6 +17,7 @@ export default function BookingPayment({
   onSelect,
   error,
   rentalType = "يومي",
+  onLoadingChange,
 }: BookingPaymentProps) {
   return (
     <div className="bg-[#FCF9F466] rounded-lg border p-3 lg:p-5 space-y-4">
@@ -29,6 +30,7 @@ export default function BookingPayment({
         onSelect={onSelect}
         error={error}
         rentalType={rentalType}
+        onLoadingChange={onLoadingChange}
       />
     </div>
   );

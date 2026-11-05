@@ -1,5 +1,6 @@
-import Link from 'next/link';
-import { FaShieldAlt, FaLock, FaEye, FaUserSecret } from 'react-icons/fa';
+import LegalFooter from '@/src/components/legal/LegalFooter';
+import LegalSection from '@/src/components/legal/LegalSection';
+import { FaLock, FaEye, FaUserSecret } from 'react-icons/fa';
 
 export default function PrivacyPage() {
   return (
@@ -7,31 +8,25 @@ export default function PrivacyPage() {
       <div className="container mx-auto max-w-4xl">
         {/* العنوان */}
         <div className="text-center mb-12">
-          
+
           <h1 className="text-xl lg:text-3xl font-bold text-gray-800 mb-4">
             سياسة الخصوصية
           </h1>
-        
+
         </div>
 
         <div className="bg-white rounded-2xl shadow-lg p-8 space-y-6">
           {/* مقدمة */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <FaLock className="text-primary" />
-              مقدمة
-            </h2>
+          <LegalSection title={<><FaLock className="text-primary" />مقدمة
+          </>} decorated>
             <p className="text-gray-600 leading-relaxed">
               نحن في طريق القيادة لتأجير السيارات (نحن أو الشركة) نلتزم بحماية خصوصيتك. تشرح سياسة الخصوصية هذه كيفية جمع واستخدام وحماية معلوماتك الشخصية عند استخدام موقعنا الإلكتروني وخدماتنا.
             </p>
-          </section>
+          </LegalSection>
 
           {/* المعلومات التي نجمعها */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <FaEye className="text-primary" />
-              المعلومات التي نجمعها
-            </h2>
+          <LegalSection title={<><FaEye className="text-primary" />المعلومات التي نجمعها
+          </>} decorated>
             <p className="text-gray-600 font-semibold mt-2">2.1 المعلومات التي تقدمها لنا</p>
             <ul className="list-disc list-inside text-gray-600 space-y-1 pr-4">
               <li>الاسم الكامل</li>
@@ -48,14 +43,11 @@ export default function PrivacyPage() {
               <li>معلومات الجهاز</li>
               <li>بيانات الاستخدام والتفاعل مع الموقع</li>
             </ul>
-          </section>
+          </LegalSection>
 
           {/* كيفية استخدام المعلومات */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3 flex items-center gap-2">
-              <FaUserSecret className="text-primary" />
-              كيفية استخدام المعلومات
-            </h2>
+          <LegalSection title={<><FaUserSecret className="text-primary" />كيفية استخدام المعلومات
+          </>} decorated>
             <p className="text-gray-600 leading-relaxed">
               نستخدم المعلومات التي نجمعها للأغراض التالية:
             </p>
@@ -67,11 +59,10 @@ export default function PrivacyPage() {
               <li>الامتثال للالتزامات القانونية</li>
               <li>منع الاحتيال وحماية أمن الموقع</li>
             </ul>
-          </section>
+          </LegalSection>
 
           {/* مشاركة المعلومات */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3">مشاركة المعلومات</h2>
+          <LegalSection title={<>مشاركة المعلومات</>}>
             <p className="text-gray-600 leading-relaxed">
               نحن لا نبيع معلوماتك الشخصية. قد نشارك معلوماتك مع:
             </p>
@@ -80,27 +71,24 @@ export default function PrivacyPage() {
               <li><span className="font-semibold">شركات التأجير:</span> شركات تأجير السيارات التي نتعامل معها لتنفيذ الحجوزات</li>
               <li><span className="font-semibold">السلطات القانونية:</span> عند الحاجة للامتثال للقوانين أو حماية حقوقنا</li>
             </ul>
-          </section>
+          </LegalSection>
 
           {/* حماية المعلومات */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3">حماية المعلومات</h2>
+          <LegalSection title={<>حماية المعلومات</>}>
             <p className="text-gray-600 leading-relaxed">
               نتخذ تدابير أمنية مناسبة لحماية معلوماتك الشخصية من الوصول غير المصرح به أو التغيير أو الكشف أو التدمير. نستخدم تقنيات التشفير والجدران النارية وأنظمة الحماية المتقدمة.
             </p>
-          </section>
+          </LegalSection>
 
           {/* ملفات تعريف الارتباط */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3">ملفات تعريف الارتباط (Cookies)</h2>
+          <LegalSection title={<>ملفات تعريف الارتباط (Cookies)</>}>
             <p className="text-gray-600 leading-relaxed">
               نستخدم ملفات تعريف الارتباط لتحسين تجربتك على موقعنا. يمكنك التحكم في ملفات تعريف الارتباط من خلال إعدادات المتصفح الخاص بك.
             </p>
-          </section>
+          </LegalSection>
 
           {/* حقوقك */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3">حقوقك</h2>
+          <LegalSection title={<>حقوقك</>}>
             <p className="text-gray-600 leading-relaxed">
               لديك الحق في:
             </p>
@@ -111,27 +99,24 @@ export default function PrivacyPage() {
               <li>الاعتراض على معالجة معلوماتك</li>
               <li>طلب نقل معلوماتك</li>
             </ul>
-          </section>
+          </LegalSection>
 
           {/* الاحتفاظ بالبيانات */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3">الاحتفاظ بالبيانات</h2>
+          <LegalSection title={<>الاحتفاظ بالبيانات</>}>
             <p className="text-gray-600 leading-relaxed">
               نحتفظ بمعلوماتك الشخصية طالما كانت ضرورية لتقديم خدماتنا والامتثال للالتزامات القانونية. بعد انتهاء هذه الفترة، سنقوم بحذف أو إخفاء هوية معلوماتك بشكل آمن.
             </p>
-          </section>
+          </LegalSection>
 
           {/* التغييرات على سياسة الخصوصية */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3">التغييرات على سياسة الخصوصية</h2>
+          <LegalSection title={<>التغييرات على سياسة الخصوصية</>}>
             <p className="text-gray-600 leading-relaxed">
               قد نحدث سياسة الخصوصية هذه من وقت لآخر. سنقوم بإشعارك بأي تغييرات جوهرية من خلال نشر السياسة المحدثة على موقعنا مع تحديث تاريخ آخر تحديث
             </p>
-          </section>
+          </LegalSection>
 
           {/* الاتصال بنا */}
-          <section>
-            <h2 className="text-lg lg:text-xl font-bold text-gray-800 mb-3">الاتصال بنا</h2>
+          <LegalSection title={<>الاتصال بنا</>}>
             <p className="text-gray-600 leading-relaxed">
               إذا كان لديك أي أسئلة أو مخاوف بشأن سياسة الخصوصية هذه أو ممارساتنا، يرجى الاتصال بنا:
             </p>
@@ -140,11 +125,9 @@ export default function PrivacyPage() {
               {/* <li><span className="font-semibold">الهاتف:</span> +966 50 123 4567</li> */}
               <li><span className="font-semibold">العنوان:</span> المملكة العربية السعودية</li>
             </ul>
-          </section>
+          </LegalSection>
 
-          <div className="border-t border-gray-200 pt-6 text-center text-gray-500 text-sm">
-            <p>© {new Date().getFullYear()} طريق القيادة لتأجير السيارات. جميع الحقوق محفوظة</p>
-          </div>
+          <LegalFooter />
         </div>
       </div>
     </div>

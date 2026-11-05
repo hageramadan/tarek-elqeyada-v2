@@ -35,7 +35,8 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts",
-    "src/components/common/Navbar.tsx"
+    "src/components/common/Navbar.tsx",
+    ".next-dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

@@ -20,7 +20,7 @@ import { useAuth } from "@/src/context/AuthContext";
 export default function ProfileInfo() {
   const router = useRouter();
   const { user, getUserProfile, updateProfile, logout } = useAuth();
-  
+
   const [fullName, setFullName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [countryCode, setCountryCode] = useState("+966");
@@ -36,8 +36,8 @@ export default function ProfileInfo() {
       try {
         setIsLoading(true);
         await getUserProfile();
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+      } catch {
+
         toast.error("حدث خطأ في جلب بيانات المستخدم");
       } finally {
         setIsLoading(false);
@@ -109,14 +109,13 @@ export default function ProfileInfo() {
     setCountryCode(code);
   };
 
- 
   if (isLoading) {
     return (
       <div className="bg-white rounded-2xl border p-6 space-y-6">
         <div className="flex items-center justify-center py-12">
           <div className="flex flex-col items-center gap-4">
             <FaSpinner className="w-8 h-8 text-primary animate-spin" />
-           
+
           </div>
         </div>
       </div>
@@ -178,12 +177,11 @@ export default function ProfileInfo() {
               value={phoneNumber}
               onChange={handlePhoneChange}
               required={true}
-            
+
             />
           </div>
         </div>
 
-        
         <div
           className={cn(
             "flex  items-center justify-between gap-4 pt-2",
@@ -192,7 +190,7 @@ export default function ProfileInfo() {
           )}
           style={{ transitionDelay: "200ms" }}
         >
-       
+
           <button
             type="button"
             onClick={handleLogout}

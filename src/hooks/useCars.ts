@@ -12,13 +12,13 @@ export const useCars = () => {
   const fetchCars = useCallback(async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const data = await CarService.getDailyCars();
       setCars(data);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'حدث خطأ في تحميل السيارات');
-      console.error('Error fetching cars:', err);
+
     } finally {
       setLoading(false);
     }
@@ -40,23 +40,23 @@ export const useCars = () => {
   }) => {
     return cars.filter(car => {
       let match = true;
-      
+
       if (filters.category && car.category !== filters.category) {
         match = false;
       }
-      
+
       if (filters.city && car.providerName && !car.providerName.includes(filters.city)) {
         match = false;
       }
-      
+
       if (filters.minPrice && car.pricePerDay < filters.minPrice) {
         match = false;
       }
-      
+
       if (filters.maxPrice && car.pricePerDay > filters.maxPrice) {
         match = false;
       }
-      
+
       return match;
     });
   }, [cars]);

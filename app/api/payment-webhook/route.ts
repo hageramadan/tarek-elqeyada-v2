@@ -9,8 +9,6 @@ export async function POST(request: NextRequest) {
     // 1️⃣ استقبال البيانات من Webhook
     const body = await request.json();
 
-    console.log("📥 Webhook received:", body);
-
     // 2️⃣ استخراج البيانات
     const {
       order_uuid,
@@ -36,7 +34,7 @@ export async function POST(request: NextRequest) {
     const token = authHeader?.replace("Bearer ", "") || "";
 
     if (!token) {
-      console.warn("⚠️ No token provided in webhook");
+
     }
 
     // 5️⃣ بناء response كامل
@@ -71,7 +69,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error: any) {
-    console.error("❌ Webhook error:", error);
+
     return NextResponse.json(
       { error: error.message || "Internal server error" },
       { status: 500 },

@@ -88,14 +88,14 @@ export default function ExtendBooking({
             const urlParams = new URLSearchParams(window.location.search);
             const uuid = urlParams.get('uuid');
             const paymentStatus = urlParams.get('status') as 'success' | 'failed' || 'success';
-            
+
             if (uuid) {
               await handlePaymentCallback(uuid, paymentStatus);
             }
           }
-        } catch (error) {
-          console.error("Error checking pending extension:", error);
-        }
+        } catch {
+      // Continue with the existing fallback.
+    }
       }
     };
 
@@ -111,7 +111,7 @@ export default function ExtendBooking({
         const data = await getAvailableExtensionDays(bookingId, days);
         setExtensionData(data);
       } catch (error: any) {
-        console.error("Error fetching extension data:", error);
+
         toast.error(error.message || "حدث خطأ في جلب بيانات التمديد");
       } finally {
         setIsLoading(false);
@@ -154,14 +154,12 @@ export default function ExtendBooking({
     setPaymentError("");
   };
 
-
 const handleSubmit = async () => {
-  
+
   if (days < 1) {
     toast.error("الرجاء إدخال عدد أيام صحيح");
     return;
   }
-
 
   if (!selectedPaymentMethod) {
     setPaymentError("الرجاء اختيار طريقة الدفع");
@@ -169,14 +167,12 @@ const handleSubmit = async () => {
     return;
   }
 
-  
   if (!extensionData) {
     toast.error("حدث خطأ في حساب السعر");
     return;
   }
 
   const totalAmount = extensionData.extension_price + parseFloat(extensionData.tax_amount);
-  
 
   const priceData = {
     extension_price: extensionData.extension_price,
