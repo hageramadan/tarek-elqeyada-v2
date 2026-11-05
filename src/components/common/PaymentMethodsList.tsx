@@ -3,10 +3,11 @@
 "use client";
 
 import Image from "next/image";
-import { HandCoins } from "lucide-react";
+import { CreditCard, HandCoins } from "lucide-react";
 import { cn } from "@/src/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { CarService } from "@/src/services/carService";
+import { PaymentMethodType } from "@/src/services/paymentService";
 import toast from "react-hot-toast";
 
 interface PaymentMethod {
@@ -24,6 +25,18 @@ interface PaymentMethodsListProps {
   onMethodsLoaded?: (methods: PaymentMethod[]) => void;
 }
 
+const CASH_PAYMENT_METHOD: PaymentMethod = {
+  id: String(PaymentMethodType.CASH),
+  name: "الدفع عند الاستلام",
+  image: "",
+};
+
+const MISPAY_PAYMENT_METHOD: PaymentMethod = {
+  id: String(PaymentMethodType.MISPAY),
+  name: "MISPay",
+  image: "",
+};
+
 export default function PaymentMethodsList({
   selectedMethod,
   onSelect,
@@ -34,31 +47,45 @@ export default function PaymentMethodsList({
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const availableMethods = useMemo(() => {
+    if (rentalType === "شهري") {
+      const monthlyMethods = paymentMethods.filter(
+        (method) => method.id !== CASH_PAYMENT_METHOD.id,
+      );
+
+      if (!monthlyMethods.some((method) => method.id === MISPAY_PAYMENT_METHOD.id)) {
+        monthlyMethods.push(MISPAY_PAYMENT_METHOD);
+      }
+
+      return [
+        ...monthlyMethods,
+        CASH_PAYMENT_METHOD,
+      ];
+    }
+
+    return paymentMethods;
+  }, [paymentMethods, rentalType]);
+
+  useEffect(() => {
+    if (!isLoading || rentalType === "شهري") {
+      onMethodsLoaded?.(availableMethods);
+    }
+  }, [availableMethods, isLoading, rentalType, onMethodsLoaded]);
+
   useEffect(() => {
     const fetchPaymentMethods = async () => {
       try {
         setIsLoading(true);
         const methods = await CarService.getPaymentMethods();
 
-        let filteredMethods = methods.map((method) => ({
+        const loadedMethods = methods.map((method) => ({
           id: String(method.id),
           name: method.name,
           image: method.image  || "/images/payment/visa.png",
           // description: method.description,
         }));
 
-        if (rentalType === "يومي") {
-          filteredMethods = filteredMethods.filter(
-            (method) =>
-              method.name.toLowerCase() !== "دفع نقدي بعد توصيل السيارة",
-          );
-        }
-
-        setPaymentMethods(filteredMethods);
-        
-        if (onMethodsLoaded) {
-          onMethodsLoaded(filteredMethods);
-        }
+        setPaymentMethods(loadedMethods);
       } catch (error) {
         console.error("Error fetching payment methods:", error);
         toast.error("حدث خطأ في تحميل طرق الدفع");
@@ -68,9 +95,9 @@ export default function PaymentMethodsList({
     };
 
     fetchPaymentMethods();
-  }, [rentalType, onMethodsLoaded]);
+  }, []);
 
-  if (isLoading) {
+  if (isLoading && rentalType !== "شهري") {
     return (
       <div className="flex items-center justify-center py-8">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
@@ -78,7 +105,7 @@ export default function PaymentMethodsList({
     );
   }
 
-  if (paymentMethods.length === 0) {
+  if (availableMethods.length === 0) {
     return (
       <p className="text-center text-gray-500 py-4">
         لا توجد طرق دفع متاحة حالياً
@@ -88,7 +115,7 @@ export default function PaymentMethodsList({
 
   return (
     <div className=" grid grid-cols-2 lg:grid-cols-2 gap-3">
-      {paymentMethods.map((method) => {
+      {availableMethods.map((method) => {
         const isSelected = selectedMethod === method.id;
         const isCashPayment = /cash|نقد|استلام|توصيل/i.test(method.name);
 
@@ -107,6 +134,8 @@ export default function PaymentMethodsList({
             <div className="w-9 lg:w-12 h-7 shrink-0 flex items-center justify-center">
               {isCashPayment ? (
                 <HandCoins className="w-7 h-7 text-primary" aria-hidden="true" />
+              ) : !method.image ? (
+                <CreditCard className="w-7 h-7 text-primary" aria-hidden="true" />
               ) : (
               <Image
                 src={method.image}

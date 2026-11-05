@@ -744,7 +744,7 @@ export default function BookingDetails({
               <PaymentMethodsList
                 selectedMethod={selectedPaymentMethod}
                 onSelect={setSelectedPaymentMethod}
-                rentalType="يومي"
+                rentalType={booking.booking_type === "monthly" ? "شهري" : "يومي"}
               />
             </div>
 

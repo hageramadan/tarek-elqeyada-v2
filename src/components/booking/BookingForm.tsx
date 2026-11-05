@@ -73,7 +73,7 @@ export default function BookingForm({
       if (p?.id && !unique.has(p.id)) {
         unique.set(p.id, {
           id: p.id,
-          days_count: p.days_count,
+          days_count: p.days_count || p.days || 30,
           final_price: p.final_price || p.price_total,
           label: p.label,
         });
@@ -179,6 +179,27 @@ export default function BookingForm({
   // ✅ حالة منفصلة لعدد الأشهر (للحجز الشهري فقط)
   const [rentalMonths, setRentalMonths] = useState<number>(1);
 
+  // Keep the displayed duration, calculated days and submitted period in sync.
+  useEffect(() => {
+    if (bookingType !== "monthly") return;
+
+    const validation = validateMonthlyPeriod(rentalMonths);
+    if (!validation.isValid) {
+      const fallbackPeriod = monthlyPeriods.find(
+        (period) => period.id === validation.periodId,
+      );
+      if (fallbackPeriod) {
+        setRentalMonths(Math.max(1, Math.round(fallbackPeriod.days_count / 30)));
+      }
+      return;
+    }
+
+    setPeriodId(validation.periodId ?? null);
+    if (bookingData.rentalDays !== rentalMonths * 30) {
+      updateField("rentalDays", rentalMonths * 30);
+    }
+  }, [bookingType, rentalMonths, monthlyPeriods, validateMonthlyPeriod, setPeriodId, bookingData.rentalDays, updateField]);
+
   // دالة التحقق من صحة النموذج بالكامل
   const validateForm = useCallback(() => {
     const name = bookingData.customerName?.trim();
@@ -213,9 +234,12 @@ export default function BookingForm({
       return false;
     }
 
-    if (bookingType === "monthly" && !selectedPeriod) {
-      toast.error("يرجى اختيار فترة الحجز");
-      return false;
+    if (bookingType === "monthly") {
+      const validation = validateMonthlyPeriod(rentalMonths);
+      if (!validation.isValid) {
+        toast.error(validation.message);
+        return false;
+      }
     }
 
     if (!selectedAddress) {
@@ -229,7 +253,7 @@ export default function BookingForm({
     }
 
     return true;
-  }, [bookingData, bookingType, minimumDays, selectedAddress, selectedPeriod]);
+  }, [bookingData, bookingType, minimumDays, selectedAddress, rentalMonths, validateMonthlyPeriod]);
 
   // تفريغ رقم الهاتف عند تغيير bookingData.customerPhone
   useEffect(() => {

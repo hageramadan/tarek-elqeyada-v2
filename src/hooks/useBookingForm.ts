@@ -203,7 +203,7 @@ export const useBookingForm = (
     () =>
       ({
         ...getInitialBookingData(carId),
-        rentalDays: initialRentalDays,
+        rentalDays: bookingType === "monthly" ? 30 : initialRentalDays,
         customerName: "",
         customerPhone: "",
         selectedServices: [],
@@ -225,15 +225,14 @@ export const useBookingForm = (
 
   // ✅ الفترات الشهرية المتاحة + الأشهر
   // ⚠️ بنستقبلها من BookingForm مباشرة (مفيش fetch مكرر)
-  const [monthlyPeriods, setMonthlyPeriods] = useState<any[]>(periods);
   const [availableMonthsData, setAvailableMonthsData] = useState<any[]>([]);
 
-  // ✅ مزامنة الفترات لما تتغير
-  useEffect(() => {
-    if (periods && periods.length > 0) {
-      setMonthlyPeriods(periods);
-    }
-  }, [periods]);
+  const monthlyPeriods = useMemo<any[]>(() => {
+    const month = availableMonthsData.find(
+      (month) => month.is_available && month.month === bookingData.rentalDate?.slice(0, 7),
+    );
+    return month?.available_periods?.length ? month.available_periods : periods;
+  }, [availableMonthsData, bookingData.rentalDate, periods]);
 
   // ✅ دالة التحقق من الفترة الشهرية المسموح بها
   const validateMonthlyPeriod = useCallback(

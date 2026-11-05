@@ -148,6 +148,7 @@ export default function CarBookingPage() {
     id: period.id,
     label: period.label,
     days: period.days || period.days_count || 30,
+    days_count: period.days_count || period.days || 30,
     type: period.type,
     price: period.price || period.price_total || 0,
     discount: period.discount || 0,

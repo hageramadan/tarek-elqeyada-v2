@@ -10,8 +10,8 @@ export enum PaymentMethodType {
   MADA = 8,
   TABBY = 10,
   TAMARA = 11,
-  CASH = 13,
-  MISPAY = 14,
+  CASH = 12,
+  MISPAY = 13,
 }
 
 // تعريف الـ Index لكل طريقة دفع
@@ -21,7 +21,7 @@ export const PaymentMethodIndex: Record<PaymentMethodType, number> = {
   [PaymentMethodType.MADA]: 1,
   [PaymentMethodType.TABBY]: 2,
   [PaymentMethodType.TAMARA]: 3,
-  [PaymentMethodType.CASH]: 13,
+  [PaymentMethodType.CASH]: 4,
   [PaymentMethodType.MISPAY]: 4,
 };
 
